@@ -4,10 +4,12 @@ namespace App\Http\Integrations\Uspacy;
 
 use Saloon\Http\Connector;
 use Saloon\Traits\Plugins\AcceptsJson;
+use Saloon\Traits\Plugins\AlwaysThrowOnErrors;
 
 class UspacySDK extends Connector
 {
     use AcceptsJson;
+    use AlwaysThrowOnErrors;
 
     public function __construct(
         protected string $apiUrl,

@@ -23,4 +23,5 @@ class GetExternalLinesRequest extends Request
     {
         return '/messenger/v1/external-lines';
     }
+
 }
