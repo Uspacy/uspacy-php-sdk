@@ -1,3 +1,5 @@
-# Laravel 10 template
+# Uspacy PHP SDK
 
-## Boilerplate for creating microservices based on Laravel 10
+PHP SDK for [Uspacy](https://uspacy.com) – a single workspace for managing key processes of your organization with a focus on results. Communication, collaboration and CRM. All-in-one.
+
+

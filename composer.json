@@ -1,14 +1,21 @@
 {
-    "name": "laravel/laravel",
-    "type": "project",
-    "description": "The Laravel Framework.",
-    "keywords": ["framework", "laravel"],
+    "name": "uspacy/uspacy-php-sdk",
+    "type": "library",
+    "description": "PHP SDK for Uspacy – a single workspace for managing key processes of your organization with a focus on results.",
+    "keywords": ["crm", "sdk", "uspacy", "api", "messenger"],
     "license": "MIT",
+    "authors": [
+        {
+            "name": "Kyrylo Melnychuk",
+            "email": "km@uspacy.com"
+        }
+    ],
     "require": {
         "php": "^8.1",
         "guzzlehttp/guzzle": "^7.2",
         "laravel/framework": "^10.0",
-        "laravel/tinker": "^2.8"
+        "laravel/tinker": "^2.8",
+        "saloonphp/laravel-plugin": "^2.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
