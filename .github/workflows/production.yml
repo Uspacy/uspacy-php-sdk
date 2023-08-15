@@ -1,0 +1,263 @@
+name: Build && Deploy to production
+
+on:
+  push:
+    branches:
+      - main
+    paths-ignore:
+      - '.github/**'
+  workflow_dispatch:
+
+env:
+  AWS_REGION: "eu-west-1"
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    outputs:
+      imageTag: ${{ steps.sha.outputs.sha_short }}
+      docker_username: ${{ steps.login-ecr.outputs.docker_username_905329932103_dkr_ecr_eu_west_1_amazonaws_com }} # More information on these outputs can be found below in the 'Docker Credentials' section
+      docker_password: ${{ steps.login-ecr.outputs.docker_password_905329932103_dkr_ecr_eu_west_1_amazonaws_com }}
+    permissions:
+      id-token: write # This is required for requesting the JWT
+      contents: read # This is required for actions/checkout
+    steps:
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          role-to-assume: ${{vars.AWS_ROLE_OIDC}}
+          role-session-name: AWSSsession
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Create AWS ECR repository
+        uses: uspacy/aws-ecr-action@v1
+        with:
+          repositoryName: ${{ github.event.repository.name }}
+
+      - name: Login to Amazon ECR Private
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.DOCKER_TOKEN }}
+
+      - uses: actions/checkout@v3.1.0
+        name: Checkout current repository
+
+      - uses: actions/checkout@v3.1.0
+        name: Checkout protobuf
+        with:
+          repository: Uspacy/protobuf
+          ref: 'v0.7'
+          path: 'protobuf'
+          token: ${{ secrets.DOCKER_TOKEN }}
+
+      - name: Build Protobuf
+        run: |
+             cd protobuf
+             make build-php
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v3
+        with:
+          images: |
+            905329932103.dkr.ecr.eu-west-1.amazonaws.com/${{ github.event.repository.name }}
+            ghcr.io/${{ github.repository }}
+          tags: |
+            type=schedule
+            type=ref,event=branch
+            type=ref,event=pr
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{major}}
+            type=sha
+
+      - name: Extract branch name
+        shell: bash
+        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
+        id: extract_branch
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          build-args: |
+             COMPOSER_AUTH=${{ secrets.COMPOSER_AUTH }}
+             SERVICE_NAME=${{ github.event.repository.name }}
+             DD_ENV=${{ steps.extract_branch.outputs.branch }}
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Image digest
+        run: echo ${{ steps.docker_build.outputs.digest }}
+
+      - name: Get short sha
+        id: sha
+        run: echo "sha_short=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
+  migration:
+    runs-on: self-hosted
+    needs: docker
+    services:
+      app:
+         image: "905329932103.dkr.ecr.eu-west-1.amazonaws.com/${{ github.event.repository.name }}:sha-${{ needs.docker.outputs.imageTag }}"
+         credentials:
+           username: ${{ needs.docker.outputs.docker_username }}
+           password: ${{ needs.docker.outputs.docker_password }}
+         options: >-
+               -p 8080:8080
+               -p 80:80
+               -e APP_KEY='base64:+3LUWg8XAnQUP18F6MR7Zi26Bxb5R6KqQZbGDB4BWPM='
+               -e APP_ENV='local'
+               -e DB_CONNECTION='mysql'
+               -e REDIS_HOST='redis'
+               -e APP_DEBUG='true'
+               -e LOG_CHANNEL='json'
+               -e LOG_LEVEL='debug'
+               -e REDIS_CLIENT='predis'
+               -e LOG_DEPRECATIONS_CHANNEL='null'
+               -e APP_NAME='${{ github.event.repository.name }}'
+               -e CACHE_DRIVER='redis'
+      redis:
+         image: redis
+    steps:
+      - uses: actions/checkout@v3.1.0
+        name: Checkout current repository
+      - name: Get changed files in the docs folder
+        id: migration
+        uses: tj-actions/changed-files@v35
+        with:
+          files: database/migrations/**
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1-node16
+        with:
+          aws-access-key-id: ${{ secrets.AWS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET }}
+          aws-region: ${{ env.AWS_REGION }}
+      - name: Read secrets from AWS Secrets Manager into environment variables
+        uses: abhilash1in/aws-secrets-manager-action@v2.1.0
+        with:
+          secrets: |
+             ProdPortalUASecrets
+          parse-json: true
+      - uses: addnab/docker-run-action@v3
+        name: Migrate UA
+        if: steps.migration.outputs.any_changed == 'true'
+        env:
+            PORTAL_DB_HOST: ${{ env.PRODPORTALUASECRETS_HOST }}
+            PORTAL_DB_USER: ${{ env.PRODPORTALUASECRETS_USERNAME }}
+            PORTAL_DB_PASS: ${{ env.PRODPORTALUASECRETS_PASSWORD }}
+            PORTAL_DB_NAME: 'portal-service'
+        with:
+            username: ${{ github.repository_owner }}
+            password: ${{ secrets.DOCKER_TOKEN }}
+            registry: ghcr.io
+            image: ghcr.io/uspacy/migration-tool:main
+            options: -e PORTAL_DB_HOST -e PORTAL_DB_USER -e PORTAL_DB_PASS
+            run: python /home/migrate/migrate.py -m --withoutSeeding --ServiceCode ${{ github.event.repository.name }}  --serviceUrl http://app:8080 --PortalDBName portal-service
+      - uses: addnab/docker-run-action@v3
+        name: Migrate COM
+        if: steps.migration.outputs.any_changed == 'true'
+        env:
+            PORTAL_DB_HOST: ${{ env.PRODPORTALUASECRETS_HOST }}
+            PORTAL_DB_USER: ${{ env.PRODPORTALUASECRETS_USERNAME }}
+            PORTAL_DB_PASS: ${{ env.PRODPORTALUASECRETS_PASSWORD }}
+            PORTAL_DB_NAME: 'portal-service-com'
+        with:
+            username: ${{ github.repository_owner }}
+            password: ${{ secrets.DOCKER_TOKEN }}
+            registry: ghcr.io
+            image: ghcr.io/uspacy/migration-tool:main
+            options: -e PORTAL_DB_HOST -e PORTAL_DB_USER -e PORTAL_DB_PASS
+            run: python /home/migrate/migrate.py -m --withoutSeeding --ServiceCode ${{ github.event.repository.name }}  --serviceUrl http://app:8080 --PortalDBName portal-service-com
+      - uses: addnab/docker-run-action@v3
+        name: Migrate EU
+        if: steps.migration.outputs.any_changed == 'true'
+        env:
+            PORTAL_DB_HOST: ${{ env.PRODPORTALUASECRETS_HOST }}
+            PORTAL_DB_USER: ${{ env.PRODPORTALUASECRETS_USERNAME }}
+            PORTAL_DB_PASS: ${{ env.PRODPORTALUASECRETS_PASSWORD }}
+            PORTAL_DB_NAME: 'portal-service-eu'
+        with:
+            username: ${{ github.repository_owner }}
+            password: ${{ secrets.DOCKER_TOKEN }}
+            registry: ghcr.io
+            image: ghcr.io/uspacy/migration-tool:main
+            options: -e PORTAL_DB_HOST -e PORTAL_DB_USER -e PORTAL_DB_PASS
+            run: python /home/migrate/migrate.py -m --withoutSeeding --ServiceCode ${{ github.event.repository.name }}  --serviceUrl http://app:8080 --PortalDBName portal-service-eu
+      - uses: addnab/docker-run-action@v3
+        name: Migrate BR
+        if: steps.migration.outputs.any_changed == 'true'
+        env:
+            PORTAL_DB_HOST: ${{ env.PRODPORTALUASECRETS_HOST }}
+            PORTAL_DB_USER: ${{ env.PRODPORTALUASECRETS_USERNAME }}
+            PORTAL_DB_PASS: ${{ env.PRODPORTALUASECRETS_PASSWORD }}
+            PORTAL_DB_NAME: 'portal-service-br'
+        with:
+            username: ${{ github.repository_owner }}
+            password: ${{ secrets.DOCKER_TOKEN }}
+            registry: ghcr.io
+            image: ghcr.io/uspacy/migration-tool:main
+            options: -e PORTAL_DB_HOST -e PORTAL_DB_USER -e PORTAL_DB_PASS
+            run: python /home/migrate/migrate.py -m --withoutSeeding --ServiceCode ${{ github.event.repository.name }}  --serviceUrl http://app:8080 --PortalDBName portal-service-br
+      - uses: addnab/docker-run-action@v3
+        name: Migrate PL
+        if: steps.migration.outputs.any_changed == 'true'
+        env:
+            PORTAL_DB_HOST: ${{ env.PRODPORTALUASECRETS_HOST }}
+            PORTAL_DB_USER: ${{ env.PRODPORTALUASECRETS_USERNAME }}
+            PORTAL_DB_PASS: ${{ env.PRODPORTALUASECRETS_PASSWORD }}
+            PORTAL_DB_NAME: 'portal-service-pl'
+        with:
+            username: ${{ github.repository_owner }}
+            password: ${{ secrets.DOCKER_TOKEN }}
+            registry: ghcr.io
+            image: ghcr.io/uspacy/migration-tool:main
+            options: -e PORTAL_DB_HOST -e PORTAL_DB_USER -e PORTAL_DB_PASS
+            run: python /home/migrate/migrate.py -m --withoutSeeding --ServiceCode ${{ github.event.repository.name }}  --serviceUrl http://app:8080 --PortalDBName portal-service-pl
+      - name: Application logs
+        run: docker logs "${{ job.services.app.id }}"
+
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: [docker, migration]
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Get image tag
+        run: echo image=$(echo "905329932103.dkr.ecr.eu-west-1.amazonaws.com/${{ github.event.repository.name }}:sha-${{ needs.docker.outputs.imageTag }}") >> $GITHUB_OUTPUT
+        id: image_tag
+      - uses: actions/checkout@v3.1.0
+        name: Checkout ArgoCD manifests
+        with:
+          repository: Uspacy/argocd-applications
+          ref: 'main'
+          path: '.'
+          token: ${{ secrets.DOCKER_TOKEN }}
+      - name: Set Image
+        uses: mikefarah/yq@master
+        with:
+            cmd: for i in $(ls */production/${{ github.event.repository.name }}.yaml); do yq -i '(.spec.source.directory.jsonnet.extVars.[] | select(.name == "dockerImage")).value="${{ steps.image_tag.outputs.image }}"' "$i"; done;
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+            commit_message: Automated Change
+            branch: main
+            commit_options: '--no-verify --signoff'
+            commit_user_name: My GitHub Actions Bot # defaults to "github-actions[bot]"
+            commit_user_email: ms@uspacy.com # defaults to "github-actions[bot]@users.noreply.github.com"
+            commit_author: Author <ms@uspacy.com> # defaults to author of the commit that triggered the run
