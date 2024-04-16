@@ -23,6 +23,7 @@
         "laravel/sail": "^1.18",
         "mockery/mockery": "^1.4.4",
         "nunomaduro/collision": "^7.0",
+        "pestphp/pest": "^2.34",
         "phpunit/phpunit": "^10.0"
     },
     "autoload": {
@@ -38,6 +39,9 @@
         }
     },
     "scripts": {
+        "test": [
+        "./vendor/bin/pest -p"
+        ],
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump"
         ],

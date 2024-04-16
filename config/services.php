@@ -31,4 +31,9 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'uspacy' => [
+        'api_domain' => env('USPACY_API_DOMAIN'),
+        'api_token' => env('USPACY_API_TOKEN'),
+        ],
+
 ];

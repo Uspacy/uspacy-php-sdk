@@ -10,6 +10,7 @@ use Saloon\Traits\Body\HasJsonBody;
 class RefreshTokenRequest extends Request implements HasBody
 {
     use HasJsonBody;
+
     /**
      * Define the HTTP method
      *
@@ -27,6 +28,9 @@ class RefreshTokenRequest extends Request implements HasBody
         return '/auth/v1/auth/refresh_token';
     }
 
+    /**
+     * @return array
+     */
     protected function defaultBody(): array
     {
         return [];

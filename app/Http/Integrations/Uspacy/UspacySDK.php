@@ -2,6 +2,7 @@
 
 namespace App\Http\Integrations\Uspacy;
 
+use App\Http\Integrations\Uspacy\Resources\CreateCrmEntityItemResource;
 use Saloon\Http\Connector;
 use Saloon\Traits\Plugins\AcceptsJson;
 use Saloon\Traits\Plugins\AlwaysThrowOnErrors;
@@ -12,12 +13,12 @@ class UspacySDK extends Connector
     use AlwaysThrowOnErrors;
 
     public function __construct(
-        protected string $apiUrl,
-        protected string $apiToken,
+        protected ?string $apiUrl = null,
+        protected ?string $apiToken = null,
     ){
-       $this->withTokenAuth($this->apiToken); 
+        $this->withTokenAuth($this->apiToken ?? config('services.uspacy.api_token'));
+        $this->apiUrl = $this->apiUrl ?? config('services.uspacy.api_domain');
     }
-
 
     /**
      * The Base URL of the API
@@ -37,7 +38,7 @@ class UspacySDK extends Connector
     protected function defaultHeaders(): array
     {
         return [
-            
+
         ];
     }
 
@@ -48,6 +49,7 @@ class UspacySDK extends Connector
      */
     protected function defaultConfig(): array
     {
-        return [];
+        return [
+        ];
     }
 }

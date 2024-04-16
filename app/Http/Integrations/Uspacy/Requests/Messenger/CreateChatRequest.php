@@ -12,9 +12,14 @@ class CreateChatRequest extends Request implements HasBody
 {
     use HasJsonBody;
 
+    /**
+     * @param  array  $payload
+     */
     public function __construct(
         protected array $payload
-    ) {}
+    ) {
+
+    }
 
     /**
      * Define the HTTP method
@@ -33,6 +38,9 @@ class CreateChatRequest extends Request implements HasBody
         return '/messenger/v1/chats';
     }
 
+    /**
+     * @return array
+     */
     protected function defaultBody(): array
     {
         return $this->payload;
