@@ -35,6 +35,10 @@ class UploadFilesRequest extends Request  implements HasBody
     {
         return '/files/v1/files';
     }
+
+    /**
+     * @return array
+     */
     protected function defaultBody(): array
     {
         $multipartFiles  = [];

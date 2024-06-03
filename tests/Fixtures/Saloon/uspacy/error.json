@@ -1,0 +1,7 @@
+{
+  "statusCode": 401,
+  "headers": {
+    "Content-type": "aplication/json"
+  },
+  "data": "{\"error\": \"Unauthorized\"}"
+}
