@@ -13,7 +13,6 @@ class UpdateMessageRequest extends Request  implements HasBody
     use HasJsonBody;
 
     public function __construct(
-        protected string $messageId,
         protected array $payload
     ) {}
     
@@ -31,7 +30,7 @@ class UpdateMessageRequest extends Request  implements HasBody
      */
     public function resolveEndpoint(): string
     {
-        return '/messenger/v1/messages/' . $this->messageId;
+        return '/messenger/v1/messages';
     }
 
     protected function defaultBody(): array
