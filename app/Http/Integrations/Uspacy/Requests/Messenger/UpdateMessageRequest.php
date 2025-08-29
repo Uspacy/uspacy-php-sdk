@@ -8,13 +8,13 @@ use Saloon\Http\Request;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Traits\Body\HasJsonBody;
 
-class DeleteMessageRequest extends Request implements HasBody
+class UpdateMessageRequest extends Request  implements HasBody
 {
-
     use HasJsonBody;
 
     public function __construct(
-        protected string $messageId
+        protected string $messageId,
+        protected array $payload
     ) {}
     
     /**
@@ -22,7 +22,7 @@ class DeleteMessageRequest extends Request implements HasBody
      *
      * @var Method
      */
-    protected Method $method = Method::DELETE;
+    protected Method $method = Method::PATCH;
 
     /**
      * Define the endpoint for the request
@@ -32,5 +32,10 @@ class DeleteMessageRequest extends Request implements HasBody
     public function resolveEndpoint(): string
     {
         return '/messenger/v1/messages/' . $this->messageId;
+    }
+
+    protected function defaultBody(): array
+    {
+        return $this->payload;
     }
 }
