@@ -15,20 +15,15 @@ class ApplicationSignInRequest extends Request implements HasBody
     public function __construct(
         protected string $clientId,
         protected string $clientSecret,
-    ) {
-    }
+    ) {}
 
     /**
      * Define the HTTP method
-     *
-     * @var Method
      */
     protected Method $method = Method::POST;
 
     /**
      * Define the endpoint for the request
-     *
-     * @return string
      */
     public function resolveEndpoint(): string
     {
@@ -38,7 +33,7 @@ class ApplicationSignInRequest extends Request implements HasBody
     protected function defaultBody(): array
     {
         return [
-            'client_id'     => $this->clientId,
+            'client_id' => $this->clientId,
             'client_secret' => $this->clientSecret,
         ];
     }

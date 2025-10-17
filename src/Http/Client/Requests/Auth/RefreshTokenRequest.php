@@ -2,25 +2,22 @@
 
 namespace Uspacy\SDK\Http\Client\Requests\Auth;
 
+use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
-use Saloon\Contracts\Body\HasBody;
 use Saloon\Traits\Body\HasJsonBody;
 
 class RefreshTokenRequest extends Request implements HasBody
 {
     use HasJsonBody;
+
     /**
      * Define the HTTP method
-     *
-     * @var Method
      */
     protected Method $method = Method::POST;
 
     /**
      * Define the endpoint for the request
-     *
-     * @return string
      */
     public function resolveEndpoint(): string
     {

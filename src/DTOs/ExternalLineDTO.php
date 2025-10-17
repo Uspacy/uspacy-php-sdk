@@ -7,11 +7,17 @@ use Saloon\Http\Response;
 class ExternalLineDTO
 {
     public $timestamp;
+
     public $name;
+
     public $icon;
+
     public $portal;
+
     public $phoneNumber;
+
     public $externalId;
+
     public $id;
 
     public function __construct($timestamp, $name, $icon, $portal, $phoneNumber, $externalId, $id)

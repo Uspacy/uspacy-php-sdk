@@ -8,6 +8,5 @@ final class Tokens
         public string $token,
         public string $refreshToken,
         public string $expiresIn,
-    ) {
-    }
+    ) {}
 }

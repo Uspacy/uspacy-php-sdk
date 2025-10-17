@@ -2,8 +2,10 @@
 
 namespace Uspacy\SDK\DTOs;
 
-class ExternalMetaDTO {
+class ExternalMetaDTO
+{
     public string $type;
+
     public string $value;
 
     public function __construct(string $type, string $value)

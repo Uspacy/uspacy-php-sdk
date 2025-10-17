@@ -7,11 +7,17 @@ use Saloon\Http\Response;
 class ExternalChatDTO
 {
     public string $name;
+
     public string $type;
+
     public string $id;
+
     public string $pictureUrl;
+
     public array $members;
+
     public array $externalLines;
+
     public array $meta;
 
     public function __construct(
@@ -22,8 +28,7 @@ class ExternalChatDTO
         array $members,
         array $externalLines,
         array $meta
-        )
-    {
+    ) {
         $this->name = $name;
         $this->type = $type;
         $this->id = $id;

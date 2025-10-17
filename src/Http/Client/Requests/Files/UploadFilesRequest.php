@@ -3,19 +3,17 @@
 namespace Uspacy\SDK\Http\Client\Requests\Files;
 
 use Saloon\Contracts\Body\HasBody;
+use Saloon\Data\MultipartValue;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Saloon\Traits\Body\HasMultipartBody;
-use Saloon\Data\MultipartValue;
 
-class UploadFilesRequest extends Request  implements HasBody
+class UploadFilesRequest extends Request implements HasBody
 {
     use HasMultipartBody;
 
     /**
      * Define the HTTP method
-     *
-     * @var Method
      */
     protected Method $method = Method::POST;
 
@@ -27,23 +25,21 @@ class UploadFilesRequest extends Request  implements HasBody
 
     /**
      * Define the endpoint for the request
-     *
-     * @return string
      */
     public function resolveEndpoint(): string
     {
         return '/files/v1/files';
     }
+
     protected function defaultBody(): array
     {
-        $multipartFiles  = [];
+        $multipartFiles = [];
         foreach ($this->filePath as $k => $file) {
-            $multipartFiles['files[' .$k.']'] = new MultipartValue(name: 'files[' .$k.']', value: $file['data'], filename:$file['name']);
+            $multipartFiles['files['.$k.']'] = new MultipartValue(name: 'files['.$k.']', value: $file['data'], filename: $file['name']);
         }
         $multipartFiles['entityType'] = new MultipartValue(name: 'entityType', value: $this->entityType);
-        $multipartFiles['entityId'] =  new MultipartValue(name: 'entityId', value: $this->entityId);
+        $multipartFiles['entityId'] = new MultipartValue(name: 'entityId', value: $this->entityId);
 
         return $multipartFiles;
     }
 }
-

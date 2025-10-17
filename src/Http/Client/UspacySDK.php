@@ -14,15 +14,12 @@ class UspacySDK extends Connector
     public function __construct(
         protected string $apiUrl,
         protected string $apiToken,
-    ){
-       $this->withTokenAuth($this->apiToken);
+    ) {
+        $this->withTokenAuth($this->apiToken);
     }
-
 
     /**
      * The Base URL of the API
-     *
-     * @return string
      */
     public function resolveBaseUrl(): string
     {

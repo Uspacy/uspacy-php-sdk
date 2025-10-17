@@ -10,11 +10,10 @@ use Uspacy\SDK\Http\Client\Requests\Auth\Tokens;
 
 class RefreshApplicationTokenMiddleware implements ResponseMiddleware
 {
-
     private $callback;
 
     /**
-     * @param callable(Tokens): void $callback
+     * @param  callable(Tokens): void  $callback
      */
     public function __construct(
         private string $clientId,
@@ -24,7 +23,8 @@ class RefreshApplicationTokenMiddleware implements ResponseMiddleware
         $this->callback = $callback;
     }
 
-    public function __invoke(Response $response): Response {
+    public function __invoke(Response $response): Response
+    {
         if ($response->status() !== 401) {
             return $response;
         }

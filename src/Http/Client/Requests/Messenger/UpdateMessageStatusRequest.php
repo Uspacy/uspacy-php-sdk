@@ -2,14 +2,13 @@
 
 namespace Uspacy\SDK\Http\Client\Requests\Messenger;
 
-use Uspacy\SDK\DTOs\Messages\UpdateMessageStatusDTO;
+use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
-
-use Saloon\Contracts\Body\HasBody;
 use Saloon\Traits\Body\HasJsonBody;
+use Uspacy\SDK\DTOs\Messages\UpdateMessageStatusDTO;
 
-class UpdateMessageStatusRequest extends Request  implements HasBody
+class UpdateMessageStatusRequest extends Request implements HasBody
 {
     use HasJsonBody;
 
@@ -20,15 +19,11 @@ class UpdateMessageStatusRequest extends Request  implements HasBody
 
     /**
      * Define the HTTP method
-     *
-     * @var Method
      */
     protected Method $method = Method::PATCH;
 
     /**
      * Define the endpoint for the request
-     *
-     * @return string
      */
     public function resolveEndpoint(): string
     {
@@ -39,7 +34,7 @@ class UpdateMessageStatusRequest extends Request  implements HasBody
     {
         return [
             'status' => $this->payload->status?->value,
-            'statusText' => $this->payload->message
+            'statusText' => $this->payload->message,
         ];
     }
 }
