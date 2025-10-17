@@ -23,7 +23,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Uspacy\\": "app/"
+            "Uspacy\\SDK\\": "src/"
         }
     },
     "config": {
