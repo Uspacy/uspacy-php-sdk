@@ -1,0 +1,27 @@
+<?php
+
+namespace Uspacy\SDK\Http\Client\Requests\Messenger;
+
+use Saloon\Enums\Method;
+use Saloon\Http\Request;
+
+class GetMessageRequest extends Request
+{
+    /**
+     * Define the HTTP method
+     */
+    protected Method $method = Method::GET;
+
+    public function __construct(
+        protected string $messageId
+    ) {
+    }
+
+    /**
+     * Define the endpoint for the request
+     */
+    public function resolveEndpoint(): string
+    {
+        return "/messenger/v1/messages/{$this->messageId}";
+    }
+}
