@@ -1,6 +1,6 @@
 <?php
 
-namespace Uspacy\SDK\Http\Integrations\Uspacy\Requests\Messenger;
+namespace Uspacy\SDK\Http\Client\Requests\Messenger;
 
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
@@ -8,12 +8,13 @@ use Saloon\Http\Request;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Traits\Body\HasJsonBody;
 
-class UpdateMessageRequest extends Request  implements HasBody
+class DeleteMessageRequest extends Request implements HasBody
 {
+
     use HasJsonBody;
 
     public function __construct(
-        protected array $payload
+        protected string $messageId
     ) {}
 
     /**
@@ -21,7 +22,7 @@ class UpdateMessageRequest extends Request  implements HasBody
      *
      * @var Method
      */
-    protected Method $method = Method::PATCH;
+    protected Method $method = Method::DELETE;
 
     /**
      * Define the endpoint for the request
@@ -30,11 +31,6 @@ class UpdateMessageRequest extends Request  implements HasBody
      */
     public function resolveEndpoint(): string
     {
-        return '/messenger/v1/messages';
-    }
-
-    protected function defaultBody(): array
-    {
-        return $this->payload;
+        return '/messenger/v1/messages/' . $this->messageId;
     }
 }

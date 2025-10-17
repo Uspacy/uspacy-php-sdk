@@ -1,6 +1,6 @@
 <?php
 
-namespace Uspacy\SDK\Http\Integrations\Uspacy\Requests\Auth;
+namespace Uspacy\SDK\Http\Client\Requests\Auth;
 
 final class Tokens
 {

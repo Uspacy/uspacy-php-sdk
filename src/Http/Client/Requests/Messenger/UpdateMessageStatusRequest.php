@@ -1,6 +1,6 @@
 <?php
 
-namespace Uspacy\SDK\Http\Integrations\Uspacy\Requests\Messenger;
+namespace Uspacy\SDK\Http\Client\Requests\Messenger;
 
 use Uspacy\SDK\DTOs\Messages\UpdateMessageStatusDTO;
 use Saloon\Enums\Method;

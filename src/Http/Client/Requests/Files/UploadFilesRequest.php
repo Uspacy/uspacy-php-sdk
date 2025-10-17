@@ -1,13 +1,12 @@
 <?php
 
-namespace Uspacy\SDK\Http\Integrations\Uspacy\Requests\Files;
+namespace Uspacy\SDK\Http\Client\Requests\Files;
 
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Saloon\Traits\Body\HasMultipartBody;
 use Saloon\Data\MultipartValue;
-use Illuminate\Support\Facades\Log;
 
 class UploadFilesRequest extends Request  implements HasBody
 {

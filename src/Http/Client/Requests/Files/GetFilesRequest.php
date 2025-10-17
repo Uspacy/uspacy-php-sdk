@@ -1,6 +1,6 @@
 <?php
 
-namespace Uspacy\SDK\Http\Integrations\Uspacy\Requests\Files;
+namespace Uspacy\SDK\Http\Client\Requests\Files;
 
 use Saloon\Enums\Method;
 use Saloon\Http\Request;

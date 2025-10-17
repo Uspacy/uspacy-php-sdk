@@ -1,27 +1,25 @@
 <?php
 
-namespace Uspacy\SDK\Http\Integrations\Uspacy\Requests\Messenger;
+namespace Uspacy\SDK\Http\Client\Requests\Messenger;
 
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
-
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Traits\Body\HasJsonBody;
 
-class CreateMessageRequest extends Request  implements HasBody
+class CreateExternalLineRequest extends Request  implements HasBody
 {
     use HasJsonBody;
-
-    public function __construct(
-        protected array $payload
-    ) {}
-
     /**
      * Define the HTTP method
      *
      * @var Method
      */
     protected Method $method = Method::POST;
+
+    public function __construct(
+        protected array $payload
+    ) {}
 
     /**
      * Define the endpoint for the request
@@ -30,7 +28,7 @@ class CreateMessageRequest extends Request  implements HasBody
      */
     public function resolveEndpoint(): string
     {
-        return '/messenger/v1/messages';
+        return '/messenger/v1/external-lines';
     }
 
     protected function defaultBody(): array

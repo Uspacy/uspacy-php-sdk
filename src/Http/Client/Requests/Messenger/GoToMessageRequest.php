@@ -1,11 +1,11 @@
 <?php
 
-namespace Uspacy\SDK\Http\Integrations\Uspacy\Requests\Messenger;
+namespace Uspacy\SDK\Http\Client\Requests\Messenger;
 
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
 
-class GetExternalLinesRequest extends Request
+class GoToMessageRequest extends Request
 {
     /**
      * Define the HTTP method
@@ -14,6 +14,11 @@ class GetExternalLinesRequest extends Request
      */
     protected Method $method = Method::GET;
 
+    public function __construct(
+        protected string $messageId
+    ) {
+    }
+
     /**
      * Define the endpoint for the request
      *
@@ -21,7 +26,7 @@ class GetExternalLinesRequest extends Request
      */
     public function resolveEndpoint(): string
     {
-        return '/messenger/v1/external-lines';
+        return "/messenger/v1/messages/{$this->messageId}/goToMessage";
     }
 
 }

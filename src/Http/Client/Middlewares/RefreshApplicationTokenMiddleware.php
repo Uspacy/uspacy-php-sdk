@@ -1,12 +1,12 @@
 <?php
 
-namespace Uspacy\SDK\Http\Integrations\Uspacy\Middleware;
+namespace Uspacy\SDK\Http\Client\Middlewares;
 
 use Saloon\Contracts\ResponseMiddleware;
 use Saloon\Http\Auth\TokenAuthenticator;
 use Saloon\Http\Response;
-use Uspacy\SDK\Http\Integrations\Uspacy\Requests\Auth\ApplicationSignInRequest;
-use Uspacy\SDK\Http\Integrations\Uspacy\Requests\Auth\Tokens;
+use Uspacy\SDK\Http\Client\Requests\Auth\ApplicationSignInRequest;
+use Uspacy\SDK\Http\Client\Requests\Auth\Tokens;
 
 class RefreshApplicationTokenMiddleware implements ResponseMiddleware
 {

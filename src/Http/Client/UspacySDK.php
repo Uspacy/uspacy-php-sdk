@@ -1,6 +1,6 @@
 <?php
 
-namespace Uspacy\SDK\Http\Integrations\Uspacy;
+namespace Uspacy\SDK\Http\Client;
 
 use Saloon\Http\Connector;
 use Saloon\Traits\Plugins\AcceptsJson;

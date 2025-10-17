@@ -1,21 +1,27 @@
 <?php
 
-namespace Uspacy\SDK\Http\Integrations\Uspacy\Requests\Auth;
+namespace Uspacy\SDK\Http\Client\Requests\Messenger;
 
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
+
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Traits\Body\HasJsonBody;
 
-class RefreshTokenRequest extends Request implements HasBody
+class UpdateMessageRequest extends Request  implements HasBody
 {
     use HasJsonBody;
+
+    public function __construct(
+        protected array $payload
+    ) {}
+
     /**
      * Define the HTTP method
      *
      * @var Method
      */
-    protected Method $method = Method::POST;
+    protected Method $method = Method::PATCH;
 
     /**
      * Define the endpoint for the request
@@ -24,11 +30,11 @@ class RefreshTokenRequest extends Request implements HasBody
      */
     public function resolveEndpoint(): string
     {
-        return '/auth/v1/auth/refresh_token';
+        return '/messenger/v1/messages';
     }
 
     protected function defaultBody(): array
     {
-        return [];
+        return $this->payload;
     }
 }
