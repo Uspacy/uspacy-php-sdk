@@ -2,7 +2,7 @@
 
 namespace Uspacy\SDK\Http\Integrations\Uspacy\Middleware;
 
-use Saloon\Http\ResponseMiddleware;
+use Saloon\Contracts\ResponseMiddleware;
 use Saloon\Http\Auth\TokenAuthenticator;
 use Saloon\Http\Response;
 use Uspacy\SDK\Http\Integrations\Uspacy\Requests\Auth\ApplicationSignInRequest;
