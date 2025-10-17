@@ -2,7 +2,7 @@
 
 namespace Uspacy\SDK\DTOs;
 
-use Saloon\Contracts\Response;
+use Saloon\Http\Response;
 
 class ExternalChatDTO
 {
