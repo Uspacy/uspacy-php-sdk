@@ -14,7 +14,8 @@ class GetMessageRequest extends Request
 
     public function __construct(
         protected string $messageId
-    ) {}
+    ) {
+    }
 
     /**
      * Define the endpoint for the request

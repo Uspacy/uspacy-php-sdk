@@ -21,10 +21,17 @@
         "saloonphp/saloon": "^3.14.0",
         "saloonphp/laravel-plugin": "^3.6.0"
     },
+    "require-dev": {
+        "symplify/easy-coding-standard": "^12.6"
+    },
     "autoload": {
         "psr-4": {
             "Uspacy\\SDK\\": "src/"
         }
+    },
+    "scripts": {
+        "lint": "vendor/bin/ecs",
+        "lint:fix": "composer run lint -- --fix"
     },
     "config": {
         "optimize-autoloader": true,

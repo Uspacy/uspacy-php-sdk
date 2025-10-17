@@ -9,5 +9,6 @@ class UpdateMessageStatusDTO
     public function __construct(
         public ?Status $status,
         public ?string $message
-    ) {}
+    ) {
+    }
 }

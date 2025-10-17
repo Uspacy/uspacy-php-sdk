@@ -15,7 +15,8 @@ class UpdateMessageStatusRequest extends Request implements HasBody
     public function __construct(
         protected string $messageId,
         protected UpdateMessageStatusDTO $payload
-    ) {}
+    ) {
+    }
 
     /**
      * Define the HTTP method

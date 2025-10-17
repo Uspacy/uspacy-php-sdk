@@ -13,7 +13,8 @@ class DeleteMessageRequest extends Request implements HasBody
 
     public function __construct(
         protected string $messageId
-    ) {}
+    ) {
+    }
 
     /**
      * Define the HTTP method
@@ -25,6 +26,6 @@ class DeleteMessageRequest extends Request implements HasBody
      */
     public function resolveEndpoint(): string
     {
-        return '/messenger/v1/messages/'.$this->messageId;
+        return '/messenger/v1/messages/' . $this->messageId;
     }
 }

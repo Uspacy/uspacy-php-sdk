@@ -15,7 +15,8 @@ class ApplicationSignInRequest extends Request implements HasBody
     public function __construct(
         protected string $clientId,
         protected string $clientSecret,
-    ) {}
+    ) {
+    }
 
     /**
      * Define the HTTP method

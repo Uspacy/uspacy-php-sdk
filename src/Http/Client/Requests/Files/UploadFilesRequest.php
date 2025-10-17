@@ -21,7 +21,8 @@ class UploadFilesRequest extends Request implements HasBody
         protected array $filePath,
         protected string $entityType,
         protected string $entityId
-    ) {}
+    ) {
+    }
 
     /**
      * Define the endpoint for the request
@@ -35,7 +36,7 @@ class UploadFilesRequest extends Request implements HasBody
     {
         $multipartFiles = [];
         foreach ($this->filePath as $k => $file) {
-            $multipartFiles['files['.$k.']'] = new MultipartValue(name: 'files['.$k.']', value: $file['data'], filename: $file['name']);
+            $multipartFiles['files[' . $k . ']'] = new MultipartValue(name: 'files[' . $k . ']', value: $file['data'], filename: $file['name']);
         }
         $multipartFiles['entityType'] = new MultipartValue(name: 'entityType', value: $this->entityType);
         $multipartFiles['entityId'] = new MultipartValue(name: 'entityId', value: $this->entityId);

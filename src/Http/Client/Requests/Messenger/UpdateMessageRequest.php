@@ -13,7 +13,8 @@ class UpdateMessageRequest extends Request implements HasBody
 
     public function __construct(
         protected array $payload
-    ) {}
+    ) {
+    }
 
     /**
      * Define the HTTP method
