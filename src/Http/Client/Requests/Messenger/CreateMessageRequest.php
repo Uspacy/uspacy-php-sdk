@@ -5,7 +5,9 @@ namespace Uspacy\SDK\Http\Client\Requests\Messenger;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
+use Saloon\Http\Response;
 use Saloon\Traits\Body\HasJsonBody;
+use Uspacy\SDK\Exception\MessageDuplicationException;
 
 class CreateMessageRequest extends Request implements HasBody
 {
@@ -32,5 +34,16 @@ class CreateMessageRequest extends Request implements HasBody
     protected function defaultBody(): array
     {
         return $this->payload;
+    }
+
+    public function getRequestException(Response $response, ?\Throwable $senderException): ?\Throwable
+    {
+        $json = $response->json();
+
+        if (isset($json['message']) && str_contains($json['message'], 'E11000 duplicate key error')) {
+            return new MessageDuplicationException($response, null, 0, $senderException);
+        }
+
+        return parent::getRequestException($response, $senderException);
     }
 }
