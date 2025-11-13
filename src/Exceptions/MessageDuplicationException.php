@@ -1,6 +1,6 @@
 <?php
 
-namespace Uspacy\SDK\Exception;
+namespace Uspacy\SDK\Exceptions;
 
 use Saloon\Exceptions\Request\RequestException;
 

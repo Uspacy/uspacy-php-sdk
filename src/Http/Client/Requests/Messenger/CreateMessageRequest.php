@@ -7,7 +7,7 @@ use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Saloon\Http\Response;
 use Saloon\Traits\Body\HasJsonBody;
-use Uspacy\SDK\Exception\MessageDuplicationException;
+use Uspacy\SDK\Exceptions\MessageDuplicationException;
 
 class CreateMessageRequest extends Request implements HasBody
 {
