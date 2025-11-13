@@ -2,8 +2,8 @@
 
 namespace Uspacy\SDK\Exceptions;
 
-use Saloon\Exceptions\Request\RequestException;
+use Saloon\Exceptions\Request\ClientException;
 
-class MessageDuplicationException extends RequestException
+class MessageDuplicationException extends ClientException
 {
 }
