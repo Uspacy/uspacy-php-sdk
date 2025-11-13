@@ -11,6 +11,8 @@ use Uspacy\SDK\Exceptions\MessageDuplicationException;
 
 class CreateMessageRequest extends Request implements HasBody
 {
+    private const DUPLICATE_KEY_ERROR_MESSAGE = 'E11000 duplicate key error';
+
     use HasJsonBody;
 
     public function __construct(
@@ -38,10 +40,13 @@ class CreateMessageRequest extends Request implements HasBody
 
     public function getRequestException(Response $response, ?\Throwable $senderException): ?\Throwable
     {
-        $json = $response->json();
+        try {
+            $json = $response->json();
 
-        if (isset($json['message']) && str_contains($json['message'], 'E11000 duplicate key error')) {
-            return new MessageDuplicationException($response, null, 0, $senderException);
+            if (isset($json['message']) && str_contains($json['message'], self::DUPLICATE_KEY_ERROR_MESSAGE)) {
+                return new MessageDuplicationException($response, null, 0, $senderException);
+            }
+        } catch (\JsonException) {
         }
 
         return parent::getRequestException($response, $senderException);
