@@ -2,39 +2,34 @@
 
 namespace Uspacy\SDK\DTOs;
 
+use DateTime;
 use Saloon\Http\Response;
 
 class ExternalLineDTO
 {
-    public $timestamp;
-
-    public $name;
-
-    public $icon;
-
-    public $portal;
-
-    public $phoneNumber;
-
-    public $externalId;
-
-    public $id;
-
-    public function __construct($timestamp, $name, $icon, $portal, $phoneNumber, $externalId, $id)
-    {
-        $this->timestamp = $timestamp;
-        $this->name = $name;
-        $this->icon = $icon;
-        $this->portal = $portal;
-        $this->phoneNumber = $phoneNumber;
-        $this->externalId = $externalId;
-        $this->id = $id;
+    public function __construct(
+        public readonly string $id,
+        public readonly \DateTimeInterface $timestamp,
+        public readonly string $name,
+        public readonly string $icon,
+        public readonly string $portal,
+        public readonly string $phoneNumber,
+        public readonly string $externalId,
+    ) {
     }
 
     public static function fromResponse(Response $response): self
     {
         $data = $response->json();
 
-        return new static($data['timestamp'], $data['name'], $data['icon'], $data['portal'], $data['phoneNumber'], $data['externalId'], $data['id']);
+        return new static(
+            id: $data['id'],
+            timestamp: DateTime::createFromFormat('U', $data['timestamp']),
+            name: $data['name'],
+            icon: $data['icon'],
+            portal: $data['portal'],
+            phoneNumber: $data['phoneNumber'],
+            externalId: $data['externalId'],
+        );
     }
 }
