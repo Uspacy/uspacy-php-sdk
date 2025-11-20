@@ -18,11 +18,10 @@
     ],
     "require": {
         "php": "^8.1",
-        "saloonphp/saloon": "^3.14.0",
         "saloonphp/laravel-plugin": "^3.6.0"
     },
     "require-dev": {
-        "symplify/easy-coding-standard": "^12.6"
+        "symplify/easy-coding-standard": "^13.0.0"
     },
     "autoload": {
         "psr-4": {
@@ -30,8 +29,8 @@
         }
     },
     "scripts": {
-        "lint": "vendor/bin/ecs",
-        "lint:fix": "composer run lint -- --fix"
+        "check-cs": "vendor/bin/ecs check",
+        "fix-cs": "composer check-cs -- --fix"
     },
     "config": {
         "optimize-autoloader": true,
