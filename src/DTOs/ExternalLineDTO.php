@@ -2,14 +2,13 @@
 
 namespace Uspacy\SDK\DTOs;
 
-use DateTime;
 use Saloon\Http\Response;
 
 class ExternalLineDTO
 {
     public function __construct(
         public readonly string $id,
-        public readonly \DateTimeInterface $timestamp,
+        public readonly int $timestamp,
         public readonly string $name,
         public readonly string $icon,
         public readonly string $portal,
@@ -24,7 +23,7 @@ class ExternalLineDTO
 
         return new static(
             id: $data['id'],
-            timestamp: DateTime::createFromFormat('U', $data['timestamp']),
+            timestamp: $data['timestamp'],
             name: $data['name'],
             icon: $data['icon'],
             portal: $data['portal'],
