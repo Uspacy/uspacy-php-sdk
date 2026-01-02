@@ -16,6 +16,13 @@ class GetGeneralSettingsRequest extends Request
 
     public function resolveEndpoint(): string
     {
-        return "/settings/v1/settings/general?domain={$this->domain}";
+        return '/settings/v1/settings/general';
+    }
+
+    protected function defaultQuery(): array
+    {
+        return [
+            'domain' => $this->domain,
+        ];
     }
 }
