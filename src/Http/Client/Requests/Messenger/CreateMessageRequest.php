@@ -43,7 +43,11 @@ class CreateMessageRequest extends Request implements HasBody
         try {
             $json = $response->json();
 
-            if (isset($json['message']) && str_contains($json['message'], self::DUPLICATE_KEY_ERROR_MESSAGE)) {
+            if (
+                isset($json['message']) &&
+                \is_string($json['message']) &&
+                str_contains($json['message'], self::DUPLICATE_KEY_ERROR_MESSAGE)
+            ) {
                 return new MessageDuplicationException($response, null, 0, $senderException);
             }
         } catch (\JsonException) {
