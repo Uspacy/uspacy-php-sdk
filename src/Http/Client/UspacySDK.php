@@ -2,6 +2,7 @@
 
 namespace Uspacy\SDK\Http\Client;
 
+use Saloon\Http\Auth\TokenAuthenticator;
 use Saloon\Http\Connector;
 use Saloon\Traits\Plugins\AcceptsJson;
 use Saloon\Traits\Plugins\AlwaysThrowOnErrors;
@@ -15,7 +16,7 @@ class UspacySDK extends Connector
         protected string $apiUrl,
         protected string $apiToken,
     ) {
-        $this->withTokenAuth($this->apiToken);
+        $this->authenticate(new TokenAuthenticator($this->apiToken, 'Bearer'));
     }
 
     /**
