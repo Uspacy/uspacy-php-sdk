@@ -22,8 +22,8 @@
         "saloonphp/laravel-plugin": "^4.3"
     },
     "require-dev": {
-        "orchestra/testbench": "^11.1",
-        "symplify/easy-coding-standard": "^13.0.0"
+        "symplify/easy-coding-standard": "^13.0.0",
+        "orchestra/testbench": "^10.11"
     },
     "autoload": {
         "psr-4": {
