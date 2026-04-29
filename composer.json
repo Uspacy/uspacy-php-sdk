@@ -18,9 +18,11 @@
     ],
     "require": {
         "php": "^8.2",
+        "illuminate/support": "^11.0 || ^12.39.0 || ^13.0",
         "saloonphp/laravel-plugin": "^4.3"
     },
     "require-dev": {
+        "orchestra/testbench": "^11.1",
         "symplify/easy-coding-standard": "^13.0.0"
     },
     "autoload": {
@@ -32,15 +34,11 @@
         "check-cs": "vendor/bin/ecs check",
         "fix-cs": "composer check-cs -- --fix"
     },
-    "config": {
-        "optimize-autoloader": true,
-        "preferred-install": "dist",
-        "sort-packages": true,
-        "allow-plugins": {
-            "pestphp/pest-plugin": true,
-            "php-http/discovery": true
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Uspacy\\SDK\\UspacySDKServiceProvider"
+            ]
         }
-    },
-    "minimum-stability": "stable",
-    "prefer-stable": true
+    }
 }

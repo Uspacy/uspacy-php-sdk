@@ -16,36 +16,18 @@ class UspacySDK extends Connector
         protected string $apiUrl,
         protected string $apiToken,
     ) {
-        $this->authenticate(new TokenAuthenticator($this->apiToken, 'Bearer'));
+        $this->authenticate(new TokenAuthenticator($this->apiToken));
+        $this->initRetryConfig();
     }
 
-    /**
-     * The Base URL of the API
-     */
     public function resolveBaseUrl(): string
     {
         return $this->apiUrl;
     }
 
-    /**
-     * Default headers for every request
-     *
-     * @return string[]
-     */
-    protected function defaultHeaders(): array
+    private function initRetryConfig(): void
     {
-        return [
-
-        ];
-    }
-
-    /**
-     * Default HTTP client options
-     *
-     * @return string[]
-     */
-    protected function defaultConfig(): array
-    {
-        return [];
+        $this->tries = \config('uspacy-sdk.retry.tries', 3);
+        $this->retryInterval = \config('uspacy-sdk.retry.interval', 1000);
     }
 }
