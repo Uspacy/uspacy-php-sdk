@@ -25,12 +25,20 @@ use Uspacy\SDK\Services\DepartmentsService;
 use Uspacy\SDK\Services\EmailsService;
 use Uspacy\SDK\Services\FilesService;
 use Uspacy\SDK\Services\GroupsService;
+use Uspacy\SDK\Services\HistoryService;
+use Uspacy\SDK\Services\InvitesService;
 use Uspacy\SDK\Services\MessengerService;
 use Uspacy\SDK\Services\NewsFeedService;
+use Uspacy\SDK\Services\NotificationsService;
+use Uspacy\SDK\Services\OAuthClientsService;
+use Uspacy\SDK\Services\ProfileService;
+use Uspacy\SDK\Services\RolesService;
 use Uspacy\SDK\Services\SettingsService;
 use Uspacy\SDK\Services\SmartObjectsService;
 use Uspacy\SDK\Services\TasksService;
+use Uspacy\SDK\Services\TasksTimerService;
 use Uspacy\SDK\Services\UsersService;
+use Uspacy\SDK\Services\WebhooksService;
 
 class UspacySDK extends Connector
 {
@@ -208,6 +216,46 @@ class UspacySDK extends Connector
     public function auth(): AuthService
     {
         return new AuthService($this->http());
+    }
+
+    public function profile(): ProfileService
+    {
+        return new ProfileService($this->http());
+    }
+
+    public function roles(): RolesService
+    {
+        return new RolesService($this->http());
+    }
+
+    public function webhooks(): WebhooksService
+    {
+        return new WebhooksService($this->http());
+    }
+
+    public function oauthClients(): OAuthClientsService
+    {
+        return new OAuthClientsService($this->http());
+    }
+
+    public function invites(): InvitesService
+    {
+        return new InvitesService($this->http());
+    }
+
+    public function notifications(): NotificationsService
+    {
+        return new NotificationsService($this->http());
+    }
+
+    public function tasksTimer(): TasksTimerService
+    {
+        return new TasksTimerService($this->http());
+    }
+
+    public function history(): HistoryService
+    {
+        return new HistoryService($this->http());
     }
 
     private function initRetryConfig(): void

@@ -63,6 +63,14 @@ Every service is reachable through an accessor on the connector:
 | `$sdk->messenger()` | `MessengerService` | `messenger/v1` |
 | `$sdk->settings()` | `SettingsService` | `settings/v1` |
 | `$sdk->auth()` | `AuthService` | `auth/v1` |
+| `$sdk->profile()` | `ProfileService` | `company/v1/users/me` |
+| `$sdk->roles()` | `RolesService` | `company/v1` · `crm/v1` |
+| `$sdk->webhooks()` | `WebhooksService` | `company/v1/webhooks` |
+| `$sdk->oauthClients()` | `OAuthClientsService` | `company/v1/oauth_clients` |
+| `$sdk->invites()` | `InvitesService` | `company/v1` |
+| `$sdk->notifications()` | `NotificationsService` | `notifications/v1` |
+| `$sdk->tasksTimer()` | `TasksTimerService` | `tasks/v1/timer` |
+| `$sdk->history()` | `HistoryService` | `history/v1` |
 
 ### CRM-family services (JS-parity)
 
@@ -200,6 +208,32 @@ $sdk->messenger()->updateSettings(['sound' => false]);
 ```php
 $tokens = $sdk->auth()->applicationSignIn($clientId, $clientSecret); // Tokens DTO
 $sdk->auth()->refreshToken();
+```
+
+### Platform services
+
+```php
+// Profile (current user)
+$sdk->profile()->getProfile();
+$sdk->profile()->enable2Fa();
+$sdk->profile()->getRequisites();
+
+// Roles & permissions
+$sdk->roles()->getRoles();
+$sdk->roles()->getPermissionsFunnels('admin');
+
+// Webhooks (outgoing, or incoming via the $isIncoming flag)
+$sdk->webhooks()->getWebhooks(page: 1);
+$sdk->webhooks()->createWebhook(['url' => 'https://...'], isIncoming: true);
+
+// OAuth clients, invites, notifications
+$sdk->oauthClients()->getOAuthClients();
+$sdk->invites()->createInvitesBatch(['ada@example.com']);
+$sdk->notifications()->getNotifications();
+
+// Task timer + change history
+$sdk->tasksTimer()->startTimer($taskId);
+$sdk->history()->getChangesHistory('crm', 'deals', 42, ['page' => 1]);
 ```
 
 ## Error handling
