@@ -274,11 +274,14 @@ class MessengerService extends Service
      */
     public function deleteChatRelation($chatId, $entityId): Response
     {
-        return $this->http->delete(self::NAMESPACE . '/chat-entity-relations/by-entity', [], [
-            'chatId' => $chatId,
-            'entityId' => $entityId,
-            'entityType' => 'task',
-        ]);
+        return $this->http->delete(
+            endpoint: self::NAMESPACE . '/chat-entity-relations/by-entity',
+            query: [
+                'chatId' => $chatId,
+                'entityId' => $entityId,
+                'entityType' => 'task',
+            ],
+        );
     }
 
     /**

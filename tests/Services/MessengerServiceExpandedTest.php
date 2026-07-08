@@ -32,6 +32,10 @@ class MessengerServiceExpandedTest extends TestCase
         $this->sdk->messenger()->getWidgets(10, 1);
         $this->assertRequestSent('GET', '/messenger/v1/widgets', null, ['limit' => 10, 'page' => 1]);
 
+        // Null optional params must be dropped, never sent as empty query values.
+        $this->sdk->messenger()->getWidgets();
+        $this->assertRequestSent('GET', '/messenger/v1/widgets', null, []);
+
         $this->sdk->messenger()->updateWidget(3, ['name' => 'W2']);
         $this->assertRequestSent('PATCH', '/messenger/v1/widgets/3', ['name' => 'W2']);
 
