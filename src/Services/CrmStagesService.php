@@ -3,6 +3,9 @@
 namespace Uspacy\SDK\Services;
 
 use Saloon\Http\Response;
+use Uspacy\SDK\DTOs\Crm\ReasonDTO;
+use Uspacy\SDK\DTOs\Crm\ReasonsDTO;
+use Uspacy\SDK\DTOs\Crm\StageDTO;
 use Uspacy\SDK\Http\Client\HttpClient;
 
 /**
@@ -24,18 +27,22 @@ class CrmStagesService extends Service
 
     /**
      * Get all kanban stages for this entity type.
+     *
+     * @return array<int, StageDTO>
      */
-    public function getStages(): Response
+    public function getStages(): array
     {
-        return $this->http->get($this->namespace() . '/kanban/stage');
+        $data = $this->http->get($this->namespace() . '/kanban/stage')->json() ?? [];
+
+        return array_map([StageDTO::class, 'fromArray'], $data['data'] ?? []);
     }
 
     /**
      * Create a kanban stage.
      */
-    public function createStage(array $data): Response
+    public function createStage(array $data): StageDTO
     {
-        return $this->http->post($this->namespace() . '/kanban/stage', $data);
+        return StageDTO::fromArray($this->http->post($this->namespace() . '/kanban/stage', $data)->json() ?? []);
     }
 
     /**
@@ -43,9 +50,9 @@ class CrmStagesService extends Service
      *
      * @param  int|string  $id
      */
-    public function updateStage($id, array $data): Response
+    public function updateStage($id, array $data): StageDTO
     {
-        return $this->http->patch($this->namespace() . "/kanban/stage/{$id}", $data);
+        return StageDTO::fromArray($this->http->patch($this->namespace() . "/kanban/stage/{$id}", $data)->json() ?? []);
     }
 
     /**
@@ -63,9 +70,9 @@ class CrmStagesService extends Service
      *
      * @param  int|string  $entityId
      */
-    public function getReasons($entityId): Response
+    public function getReasons($entityId): ReasonsDTO
     {
-        return $this->http->get(self::REASONS_NAMESPACE . "/{$entityId}");
+        return ReasonsDTO::fromArray($this->http->get(self::REASONS_NAMESPACE . "/{$entityId}")->json() ?? []);
     }
 
     /**
@@ -73,9 +80,9 @@ class CrmStagesService extends Service
      *
      * @param  int|string  $entityId
      */
-    public function createReason($entityId, array $data): Response
+    public function createReason($entityId, array $data): ReasonDTO
     {
-        return $this->http->post(self::REASONS_NAMESPACE . "/{$entityId}", $data);
+        return ReasonDTO::fromArray($this->http->post(self::REASONS_NAMESPACE . "/{$entityId}", $data)->json() ?? []);
     }
 
     /**
@@ -83,9 +90,9 @@ class CrmStagesService extends Service
      *
      * @param  int|string  $id
      */
-    public function updateReason($id, array $data): Response
+    public function updateReason($id, array $data): ReasonDTO
     {
-        return $this->http->patch(self::REASONS_NAMESPACE . "/{$id}", $data);
+        return ReasonDTO::fromArray($this->http->patch(self::REASONS_NAMESPACE . "/{$id}", $data)->json() ?? []);
     }
 
     /**
