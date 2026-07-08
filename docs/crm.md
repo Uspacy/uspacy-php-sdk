@@ -208,4 +208,58 @@ $sdk->crmProductsForEntity()->deleteProductsForEntity([1, 2]); // raw Response
 | `crmProductsForEntity()->getProductsForEntity` / `create…` / `update…` (bulk) | `ProductForEntityDTO[]` |
 | all delete / mass / list-value methods | `Saloon\Http\Response` |
 
-> Requisites and document templates are typed with the same ruleset in follow-up work.
+## Requisites
+
+`$sdk->crmRequisites()` covers card requisites, their nested bank requisites, and
+requisite templates under `/crm/v1/requisites`.
+
+```php
+// Lists -> Collection
+$sdk->crmRequisites()->getCardRequisites(['entity_id' => 5]); // Collection<RequisiteDTO>
+$sdk->crmRequisites()->getTemplates(['page' => 1]);           // Collection<RequisiteTemplateDTO>
+
+$card = $sdk->crmRequisites()->getCardRequisites()->data[0];
+$card->name;
+$card->isBasic;
+$card->templateId;
+$card->get('customfield_1');   // requisites carry custom fields too
+
+// Card requisites -> RequisiteDTO
+$sdk->crmRequisites()->createCardRequisites(['name' => 'Acme'], ['entity_id' => 5]);
+$sdk->crmRequisites()->updateCardRequisites(9, ['name' => 'Acme LLC']);
+$sdk->crmRequisites()->attachCardRequisites(['entity_id' => 5]);
+$sdk->crmRequisites()->deleteCardRequisites(9);               // raw Response
+
+// Bank requisites -> RequisiteDTO
+$sdk->crmRequisites()->createBankRequisites(9, ['iban' => 'UA...']);
+$sdk->crmRequisites()->updateBankRequisites(9, 3, ['iban' => 'UA2']);
+$sdk->crmRequisites()->attachBankRequisites(9, ['entity_id' => 5]);
+$sdk->crmRequisites()->deleteBankRequisites(9, 3);            // raw Response
+```
+
+## Document templates
+
+`$sdk->crmDocumentTemplates()` — `/crm/v1/documents/templates`.
+
+```php
+$sdk->crmDocumentTemplates()->getDocumentTemplates(['page' => 1]); // Collection<DocumentTemplateDTO>
+$sdk->crmDocumentTemplates()->getDocumentTemplatesFields();        // DocumentTemplateFieldDTO[]
+
+$sdk->crmDocumentTemplates()->createTemplate(['name' => 'Invoice']);   // DocumentTemplateDTO
+$sdk->crmDocumentTemplates()->updateTemplate(4, ['name' => 'Invoice2']); // DocumentTemplateDTO
+$sdk->crmDocumentTemplates()->deleteTemplate(4);        // raw Response
+$sdk->crmDocumentTemplates()->deleteArrayTemplates([1, 2, 3]); // raw Response
+```
+
+### Return-type reference (requisites & document templates)
+
+| Method | Returns |
+| --- | --- |
+| `crmRequisites()->getCardRequisites` | `Collection<RequisiteDTO>` |
+| `crmRequisites()->getTemplates` | `Collection<RequisiteTemplateDTO>` |
+| `crmRequisites()->create/update/attach Card/Bank Requisites` | `RequisiteDTO` |
+| `crmRequisites()->delete…` | `Saloon\Http\Response` |
+| `crmDocumentTemplates()->getDocumentTemplates` | `Collection<DocumentTemplateDTO>` |
+| `crmDocumentTemplates()->getDocumentTemplatesFields` | `DocumentTemplateFieldDTO[]` |
+| `crmDocumentTemplates()->createTemplate` / `updateTemplate` | `DocumentTemplateDTO` |
+| `crmDocumentTemplates()->deleteTemplate` / `deleteArrayTemplates` | `Saloon\Http\Response` |
