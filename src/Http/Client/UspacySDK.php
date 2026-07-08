@@ -26,7 +26,7 @@ use Uspacy\SDK\Services\EmailsService;
 use Uspacy\SDK\Services\FilesService;
 use Uspacy\SDK\Services\GroupsService;
 use Uspacy\SDK\Services\HistoryService;
-use Uspacy\SDK\Services\InvatesService;
+use Uspacy\SDK\Services\InvitesService;
 use Uspacy\SDK\Services\MessengerService;
 use Uspacy\SDK\Services\NewsFeedService;
 use Uspacy\SDK\Services\NotificationsService;
@@ -238,9 +238,9 @@ class UspacySDK extends Connector
         return new OAuthClientsService($this->http());
     }
 
-    public function invites(): InvatesService
+    public function invites(): InvitesService
     {
-        return new InvatesService($this->http());
+        return new InvitesService($this->http());
     }
 
     public function notifications(): NotificationsService

@@ -7,16 +7,17 @@ use Saloon\Http\Response;
 /**
  * Invitations service.
  *
- * Mirrors the JS SDK's InvatesService under `/company/v1`.
+ * Mirrors the JS SDK's invitations service (spelled "InvatesService" there;
+ * corrected to Invites here) under `/company/v1`.
  */
-class InvatesService extends Service
+class InvitesService extends Service
 {
     private const NAMESPACE = '/company/v1';
 
     /**
      * Check whether an email already has an invitation.
      */
-    public function checkInvateByEmail(string $email): Response
+    public function checkInviteByEmail(string $email): Response
     {
         return $this->http->get(self::NAMESPACE . '/users/check_invite', ['email' => $email]);
     }
@@ -26,7 +27,7 @@ class InvatesService extends Service
      *
      * @param  array  $body  list of invitation payloads
      */
-    public function createInvates(array $body): Response
+    public function createInvites(array $body): Response
     {
         return $this->http->post(self::NAMESPACE . '/invites/email', $body);
     }
@@ -36,7 +37,7 @@ class InvatesService extends Service
      *
      * @param  array  $emails  list of email addresses
      */
-    public function createInvatesBatch(array $emails): Response
+    public function createInvitesBatch(array $emails): Response
     {
         return $this->http->post(self::NAMESPACE . '/invites/email/batch', $emails);
     }
@@ -46,7 +47,7 @@ class InvatesService extends Service
      *
      * @param  int|string  $userId
      */
-    public function resendInvateByUserId($userId): Response
+    public function resendInviteByUserId($userId): Response
     {
         return $this->http->patch(self::NAMESPACE . "/invites/email/{$userId}/repeat_invitation");
     }
@@ -56,7 +57,7 @@ class InvatesService extends Service
      *
      * @param  int|string  $userId
      */
-    public function deleteInvateByUserId($userId): Response
+    public function deleteInviteByUserId($userId): Response
     {
         return $this->http->delete(self::NAMESPACE . "/invites/email/{$userId}");
     }

@@ -53,16 +53,16 @@ class PlatformServicesTest extends TestCase
 
     public function test_invites(): void
     {
-        $this->sdk->invites()->checkInvateByEmail('ada@example.com');
+        $this->sdk->invites()->checkInviteByEmail('ada@example.com');
         $this->assertRequestSent('GET', '/company/v1/users/check_invite', null, ['email' => 'ada@example.com']);
 
-        $this->sdk->invites()->createInvatesBatch(['a@x.com', 'b@x.com']);
+        $this->sdk->invites()->createInvitesBatch(['a@x.com', 'b@x.com']);
         $this->assertRequestSent('POST', '/company/v1/invites/email/batch', ['a@x.com', 'b@x.com']);
 
-        $this->sdk->invites()->resendInvateByUserId(7);
+        $this->sdk->invites()->resendInviteByUserId(7);
         $this->assertRequestSent('PATCH', '/company/v1/invites/email/7/repeat_invitation');
 
-        $this->sdk->invites()->deleteInvateByUserId(7);
+        $this->sdk->invites()->deleteInviteByUserId(7);
         $this->assertRequestSent('DELETE', '/company/v1/invites/email/7');
     }
 

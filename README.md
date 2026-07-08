@@ -67,7 +67,7 @@ Every service is reachable through an accessor on the connector:
 | `$sdk->roles()` | `RolesService` | `company/v1` · `crm/v1` |
 | `$sdk->webhooks()` | `WebhooksService` | `company/v1/webhooks` |
 | `$sdk->oauthClients()` | `OAuthClientsService` | `company/v1/oauth_clients` |
-| `$sdk->invites()` | `InvatesService` | `company/v1` |
+| `$sdk->invites()` | `InvitesService` | `company/v1` |
 | `$sdk->notifications()` | `NotificationsService` | `notifications/v1` |
 | `$sdk->tasksTimer()` | `TasksTimerService` | `tasks/v1/timer` |
 | `$sdk->history()` | `HistoryService` | `history/v1` |
@@ -228,7 +228,7 @@ $sdk->webhooks()->createWebhook(['url' => 'https://...'], isIncoming: true);
 
 // OAuth clients, invites, notifications
 $sdk->oauthClients()->getOAuthClients();
-$sdk->invites()->createInvatesBatch(['ada@example.com']);
+$sdk->invites()->createInvitesBatch(['ada@example.com']);
 $sdk->notifications()->getNotifications();
 
 // Task timer + change history
