@@ -17,15 +17,15 @@ class FormPostRequest extends Request implements HasBody
 {
     use HasFormBody;
 
+    protected Method $method = Method::POST;
+
     public function __construct(
         protected string $endpoint,
         protected array $payload = [],
-        protected Method $httpMethod = Method::POST,
+        Method $httpMethod = Method::POST,
     ) {
         $this->method = $httpMethod;
     }
-
-    protected Method $method = Method::POST;
 
     public function resolveEndpoint(): string
     {

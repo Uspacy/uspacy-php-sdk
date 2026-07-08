@@ -16,7 +16,7 @@ class NewsFeedService extends Service
     /**
      * Get a page of news feed posts.
      */
-    public function getPosts(int $page = 1, int $list = 20, int $groupId = 0): Response
+    public function getPosts(int $page = 1, int $list = 20, ?int $groupId = null): Response
     {
         return $this->http->get(self::NAMESPACE . '/posts/', [
             'page' => $page,

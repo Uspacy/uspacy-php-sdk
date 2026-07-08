@@ -105,7 +105,7 @@ class CrmService extends Service
      */
     public function getFields(string $entityType): Response
     {
-        return $this->http->get(self::NAMESPACE . "/entities/{$entityType}/fields/");
+        return $this->http->get(self::NAMESPACE . "/entities/{$entityType}/fields");
     }
 
     /**
@@ -113,7 +113,7 @@ class CrmService extends Service
      */
     public function getField(string $entityType, string $fieldType): Response
     {
-        return $this->http->get(self::NAMESPACE . "/entities/{$entityType}/fields/{$fieldType}/");
+        return $this->http->get(self::NAMESPACE . "/entities/{$entityType}/fields/{$fieldType}");
     }
 
     /**
@@ -129,7 +129,7 @@ class CrmService extends Service
      */
     public function deleteField(string $entityType, string $fieldCode): Response
     {
-        return $this->http->delete(self::NAMESPACE . "/entities/{$entityType}/fields/{$fieldCode}/");
+        return $this->http->delete(self::NAMESPACE . "/entities/{$entityType}/fields/{$fieldCode}");
     }
 
     /**
