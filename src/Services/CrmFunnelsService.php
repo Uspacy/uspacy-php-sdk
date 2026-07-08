@@ -3,6 +3,9 @@
 namespace Uspacy\SDK\Services;
 
 use Saloon\Http\Response;
+use Uspacy\SDK\DTOs\Crm\FunnelDTO;
+use Uspacy\SDK\DTOs\Crm\ReasonDTO;
+use Uspacy\SDK\DTOs\Crm\StageDTO;
 use Uspacy\SDK\Http\Client\HttpClient;
 
 /**
@@ -24,18 +27,22 @@ class CrmFunnelsService extends Service
 
     /**
      * Get all funnels for this entity type.
+     *
+     * @return array<int, FunnelDTO>
      */
-    public function getFunnels(): Response
+    public function getFunnels(): array
     {
-        return $this->http->get($this->namespace() . '/funnel');
+        $data = $this->http->get($this->namespace() . '/funnel')->json() ?? [];
+
+        return array_map([FunnelDTO::class, 'fromArray'], $data);
     }
 
     /**
      * Create a funnel.
      */
-    public function createFunnel(array $data): Response
+    public function createFunnel(array $data): FunnelDTO
     {
-        return $this->http->post($this->namespace() . '/funnel', $data);
+        return FunnelDTO::fromArray($this->http->post($this->namespace() . '/funnel', $data)->json() ?? []);
     }
 
     /**
@@ -43,9 +50,9 @@ class CrmFunnelsService extends Service
      *
      * @param  int|string  $id
      */
-    public function updateFunnel($id, array $data): Response
+    public function updateFunnel($id, array $data): FunnelDTO
     {
-        return $this->http->patch($this->namespace() . "/funnel/{$id}", $data);
+        return FunnelDTO::fromArray($this->http->patch($this->namespace() . "/funnel/{$id}", $data)->json() ?? []);
     }
 
     /**
@@ -62,18 +69,21 @@ class CrmFunnelsService extends Service
      * Get the kanban stages of a specific funnel.
      *
      * @param  int|string  $funnelId
+     * @return array<int, StageDTO>
      */
-    public function getStagesByFunnel($funnelId): Response
+    public function getStagesByFunnel($funnelId): array
     {
-        return $this->http->get($this->namespace() . '/kanban/stage', ['funnel_id' => $funnelId]);
+        $data = $this->http->get($this->namespace() . '/kanban/stage', ['funnel_id' => $funnelId])->json() ?? [];
+
+        return array_map([StageDTO::class, 'fromArray'], $data['data'] ?? []);
     }
 
     /**
      * Create a kanban stage for a funnel.
      */
-    public function createStage(array $data): Response
+    public function createStage(array $data): StageDTO
     {
-        return $this->http->post($this->namespace() . '/kanban/stage', $data);
+        return StageDTO::fromArray($this->http->post($this->namespace() . '/kanban/stage', $data)->json() ?? []);
     }
 
     /**
@@ -81,9 +91,9 @@ class CrmFunnelsService extends Service
      *
      * @param  int|string  $id
      */
-    public function updateStage($id, array $data): Response
+    public function updateStage($id, array $data): StageDTO
     {
-        return $this->http->patch($this->namespace() . "/kanban/stage/{$id}", $data);
+        return StageDTO::fromArray($this->http->patch($this->namespace() . "/kanban/stage/{$id}", $data)->json() ?? []);
     }
 
     /**
@@ -101,9 +111,9 @@ class CrmFunnelsService extends Service
      *
      * @param  int|string  $funnelId
      */
-    public function createStageReason($funnelId, array $data): Response
+    public function createStageReason($funnelId, array $data): ReasonDTO
     {
-        return $this->http->post(self::REASONS_NAMESPACE . "/{$funnelId}", $data);
+        return ReasonDTO::fromArray($this->http->post(self::REASONS_NAMESPACE . "/{$funnelId}", $data)->json() ?? []);
     }
 
     /**
@@ -111,9 +121,9 @@ class CrmFunnelsService extends Service
      *
      * @param  int|string  $id
      */
-    public function updateStageReason($id, array $data): Response
+    public function updateStageReason($id, array $data): ReasonDTO
     {
-        return $this->http->patch(self::REASONS_NAMESPACE . "/{$id}", $data);
+        return ReasonDTO::fromArray($this->http->patch(self::REASONS_NAMESPACE . "/{$id}", $data)->json() ?? []);
     }
 
     /**
