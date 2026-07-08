@@ -32,11 +32,11 @@ class RefreshTokenRequest extends Request implements HasBody
 
     public function createDtoFromResponse(Response $response): Tokens
     {
-        $data = $response->json();
+        $data = $response->json() ?? [];
 
         return new Tokens(
-            $data['jwt'],
-            $data['refreshToken'],
+            $data['jwt'] ?? '',
+            $data['refreshToken'] ?? '',
             $data['expireInSeconds'] ?? '',
         );
     }

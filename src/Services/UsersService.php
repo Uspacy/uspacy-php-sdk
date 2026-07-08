@@ -35,7 +35,7 @@ class UsersService extends Service
      */
     public function getAllUsers(): array
     {
-        $data = $this->http->get(self::NAMESPACE . '/users/', ['show' => 'all', 'list' => 'all'])->json();
+        $data = $this->http->get(self::NAMESPACE . '/users/', ['show' => 'all', 'list' => 'all'])->json() ?? [];
 
         return array_map([UserDTO::class, 'fromArray'], $data);
     }
@@ -51,7 +51,7 @@ class UsersService extends Service
         $params = $filter instanceof UserFilterDTO ? $filter->toArray() : $filter;
 
         return Collection::fromArray(
-            $this->http->get(self::NAMESPACE . '/users/', $params)->json(),
+            $this->http->get(self::NAMESPACE . '/users/', $params)->json() ?? [],
             [UserDTO::class, 'fromArray'],
         );
     }
@@ -63,7 +63,7 @@ class UsersService extends Service
      */
     public function getUserById($id): UserDTO
     {
-        return UserDTO::fromArray($this->http->get(self::NAMESPACE . "/users/{$id}")->json());
+        return UserDTO::fromArray($this->http->get(self::NAMESPACE . "/users/{$id}")->json() ?? []);
     }
 
     /**
@@ -95,7 +95,7 @@ class UsersService extends Service
      */
     public function deactivateUser($id): UserDTO
     {
-        return UserDTO::fromArray($this->http->post(self::USERS . "/{$id}/deactivate")->json());
+        return UserDTO::fromArray($this->http->post(self::USERS . "/{$id}/deactivate")->json() ?? []);
     }
 
     /**
@@ -105,7 +105,7 @@ class UsersService extends Service
      */
     public function activateUser($id): UserDTO
     {
-        return UserDTO::fromArray($this->http->post(self::USERS . "/{$id}/activate")->json());
+        return UserDTO::fromArray($this->http->post(self::USERS . "/{$id}/activate")->json() ?? []);
     }
 
     /**
@@ -118,7 +118,7 @@ class UsersService extends Service
     {
         $body = $roles instanceof UpdateRolesDTO ? $roles->toArray() : ['roles' => $roles];
 
-        return UserDTO::fromArray($this->http->patch(self::USERS . "/{$id}/update_roles", $body)->json());
+        return UserDTO::fromArray($this->http->patch(self::USERS . "/{$id}/update_roles", $body)->json() ?? []);
     }
 
     /**
@@ -129,7 +129,7 @@ class UsersService extends Service
     public function updatePosition($id, string $position): UserDTO
     {
         return UserDTO::fromArray(
-            $this->http->patch(self::USERS . "/{$id}/update_position", ['position' => $position])->json(),
+            $this->http->patch(self::USERS . "/{$id}/update_position", ['position' => $position])->json() ?? [],
         );
     }
 
@@ -140,7 +140,7 @@ class UsersService extends Service
      */
     public function getPortalSettings($id): PortalSettingsDTO
     {
-        return PortalSettingsDTO::fromArray($this->http->get(self::USERS . "/{$id}/settings")->json());
+        return PortalSettingsDTO::fromArray($this->http->get(self::USERS . "/{$id}/settings")->json() ?? []);
     }
 
     /**
@@ -151,7 +151,7 @@ class UsersService extends Service
     public function updatePortalSettings($id, array $settings): PortalSettingsDTO
     {
         return PortalSettingsDTO::fromArray(
-            $this->http->patch(self::USERS . "/{$id}/settings", $settings)->json(),
+            $this->http->patch(self::USERS . "/{$id}/settings", $settings)->json() ?? [],
         );
     }
 
@@ -162,7 +162,7 @@ class UsersService extends Service
      */
     public function get2FaStatus($id): TwoFaStatusDTO
     {
-        return TwoFaStatusDTO::fromArray($this->http->get(self::USERS . "/{$id}/twofa_status")->json());
+        return TwoFaStatusDTO::fromArray($this->http->get(self::USERS . "/{$id}/twofa_status")->json() ?? []);
     }
 
     /**
@@ -186,7 +186,7 @@ class UsersService extends Service
         $query = $params instanceof SearchUsersDTO ? $params->toArray() : $params;
 
         return Collection::fromArray(
-            $this->http->get(self::USERS . '/search/', $query)->json(),
+            $this->http->get(self::USERS . '/search/', $query)->json() ?? [],
             [UserDTO::class, 'fromArray'],
         );
     }
@@ -205,7 +205,7 @@ class UsersService extends Service
             $parts[] = new MultipartValue(name: 'userId', value: (string) $userId);
         }
 
-        return UserDTO::fromArray($this->http->postMultipart(self::USERS . '/upload_avatar/', $parts)->json());
+        return UserDTO::fromArray($this->http->postMultipart(self::USERS . '/upload_avatar/', $parts)->json() ?? []);
     }
 
     /**
@@ -217,7 +217,7 @@ class UsersService extends Service
     public function getUsersByIds(array $ids): Collection
     {
         return Collection::fromArray(
-            $this->http->get(self::USERS, ['ids' => $ids])->json(),
+            $this->http->get(self::USERS, ['ids' => $ids])->json() ?? [],
             [UserDTO::class, 'fromArray'],
         );
     }
@@ -237,7 +237,7 @@ class UsersService extends Service
      */
     public function getUsersOnlineStatuses(): UserOnlineStatusesDTO
     {
-        return UserOnlineStatusesDTO::fromArray($this->http->get(self::USERS . '/online')->json());
+        return UserOnlineStatusesDTO::fromArray($this->http->get(self::USERS . '/online')->json() ?? []);
     }
 
     /**
@@ -250,7 +250,7 @@ class UsersService extends Service
         $payload = $data instanceof ImportRegisteredUserDTO ? $data->toArray() : $data;
 
         return UserDTO::fromArray(
-            $this->http->post(self::NAMESPACE . '/invites/email/import_registered', $payload)->json(),
+            $this->http->post(self::NAMESPACE . '/invites/email/import_registered', $payload)->json() ?? [],
         );
     }
 
@@ -262,6 +262,6 @@ class UsersService extends Service
     {
         $payload = $data instanceof UpdateUserDTO ? $data->toArray() : $data;
 
-        return UserDTO::fromArray($this->http->patch(self::USERS . "/{$id}", $payload)->json());
+        return UserDTO::fromArray($this->http->patch(self::USERS . "/{$id}", $payload)->json() ?? []);
     }
 }

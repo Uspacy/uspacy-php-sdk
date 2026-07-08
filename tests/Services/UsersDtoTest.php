@@ -138,6 +138,28 @@ class UsersDtoTest extends TestCase
         $this->sdk->getMockClient()->assertSent(fn (PatchRequest $r) => $r->body()->all() === ['roles' => ['viewer']]);
     }
 
+    public function test_empty_or_null_response_body_does_not_throw(): void
+    {
+        // An empty body decodes to null; DTO hydration must tolerate it.
+        $this->sdk->withMockClient(new MockClient([
+            GetRequest::class => MockResponse::make('', 204),
+        ]));
+
+        $user = $this->sdk->users()->getUserById(7);
+        $this->assertInstanceOf(UserDTO::class, $user);
+        $this->assertNull($user->id);
+
+        $page = $this->sdk->users()->getUsers();
+        $this->assertInstanceOf(Collection::class, $page);
+        $this->assertSame([], $page->data);
+
+        $this->assertSame([], $this->sdk->users()->getAllUsers());
+
+        $statuses = $this->sdk->users()->getUsersOnlineStatuses();
+        $this->assertInstanceOf(UserOnlineStatusesDTO::class, $statuses);
+        $this->assertSame([], $statuses->statuses);
+    }
+
     private function mockGet(array $payload): void
     {
         $this->sdk->withMockClient(new MockClient([
