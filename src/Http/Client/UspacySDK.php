@@ -7,7 +7,9 @@ use Saloon\Http\Connector;
 use Saloon\Traits\Plugins\AcceptsJson;
 use Saloon\Traits\Plugins\AlwaysThrowOnErrors;
 use Uspacy\SDK\Services\ActivitiesService;
+use Uspacy\SDK\Services\AnalyticsService;
 use Uspacy\SDK\Services\AuthService;
+use Uspacy\SDK\Services\AutomationsService;
 use Uspacy\SDK\Services\CommentsService;
 use Uspacy\SDK\Services\CrmDocumentTemplatesService;
 use Uspacy\SDK\Services\CrmEntityService;
@@ -27,7 +29,9 @@ use Uspacy\SDK\Services\FilesService;
 use Uspacy\SDK\Services\GroupsService;
 use Uspacy\SDK\Services\HistoryService;
 use Uspacy\SDK\Services\InvitesService;
+use Uspacy\SDK\Services\MarketingService;
 use Uspacy\SDK\Services\MessengerService;
+use Uspacy\SDK\Services\MigrationsService;
 use Uspacy\SDK\Services\NewsFeedService;
 use Uspacy\SDK\Services\NotificationsService;
 use Uspacy\SDK\Services\OAuthClientsService;
@@ -256,6 +260,26 @@ class UspacySDK extends Connector
     public function history(): HistoryService
     {
         return new HistoryService($this->http());
+    }
+
+    public function marketing(): MarketingService
+    {
+        return new MarketingService($this->http());
+    }
+
+    public function analytics(): AnalyticsService
+    {
+        return new AnalyticsService($this->http());
+    }
+
+    public function automations(): AutomationsService
+    {
+        return new AutomationsService($this->http());
+    }
+
+    public function migrations(): MigrationsService
+    {
+        return new MigrationsService($this->http());
     }
 
     private function initRetryConfig(): void

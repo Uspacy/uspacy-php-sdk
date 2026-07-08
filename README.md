@@ -71,6 +71,10 @@ Every service is reachable through an accessor on the connector:
 | `$sdk->notifications()` | `NotificationsService` | `notifications/v1` |
 | `$sdk->tasksTimer()` | `TasksTimerService` | `tasks/v1/timer` |
 | `$sdk->history()` | `HistoryService` | `history/v1` |
+| `$sdk->marketing()` | `MarketingService` | `marketing/v1` |
+| `$sdk->analytics()` | `AnalyticsService` | `analytics-backend/v1` |
+| `$sdk->automations()` | `AutomationsService` | `automations-backend/v1` |
+| `$sdk->migrations()` | `MigrationsService` | import status/control |
 
 ### CRM-family services (JS-parity)
 
@@ -234,6 +238,28 @@ $sdk->notifications()->getNotifications();
 // Task timer + change history
 $sdk->tasksTimer()->startTimer($taskId);
 $sdk->history()->getChangesHistory('crm', 'deals', 42, ['page' => 1]);
+```
+
+### Growth / back-office
+
+```php
+// Marketing: email templates, newsletters, domains, senders
+$sdk->marketing()->getEmailTemplates(['page' => 1]);
+$sdk->marketing()->createEmailNewsletter(['subject' => 'Launch']);
+$sdk->marketing()->sendEmailNewsletter(5);
+$sdk->marketing()->getSenders();
+
+// Analytics: reports, dashboards, funnel conversion
+$sdk->analytics()->getAnalyticsReportList();
+$sdk->analytics()->getFunnelConversion(['funnel_id' => 3]);
+
+// Automations: workers + workflows (processes)
+$sdk->automations()->getWorkflows();
+$sdk->automations()->createWorkflow(['name' => 'Onboarding']);
+
+// Migrations: import status & control
+$sdk->migrations()->getAllSystemsStatus();
+$sdk->migrations()->stopImport('trello');
 ```
 
 ## Error handling
