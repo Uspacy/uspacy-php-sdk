@@ -7,6 +7,7 @@ use Saloon\Http\Response;
 use Uspacy\SDK\Http\Client\Requests\DeleteRequest;
 use Uspacy\SDK\Http\Client\Requests\FormPostRequest;
 use Uspacy\SDK\Http\Client\Requests\GetRequest;
+use Uspacy\SDK\Http\Client\Requests\MultipartPostRequest;
 use Uspacy\SDK\Http\Client\Requests\PatchRequest;
 use Uspacy\SDK\Http\Client\Requests\PostRequest;
 use Uspacy\SDK\Http\Client\Requests\PutRequest;
@@ -57,6 +58,14 @@ class HttpClient
     public function patchForm(string $endpoint, array $payload = []): Response
     {
         return $this->connector->send(new FormPostRequest($endpoint, $payload, Method::PATCH));
+    }
+
+    /**
+     * @param  array<int, \Saloon\Data\MultipartValue>  $parts
+     */
+    public function postMultipart(string $endpoint, array $parts = []): Response
+    {
+        return $this->connector->send(new MultipartPostRequest($endpoint, $parts));
     }
 
     public function connector(): UspacySDK

@@ -24,6 +24,8 @@ use Uspacy\SDK\Http\Client\Requests\Messenger\UpdateMessageStatusRequest;
  */
 class MessengerService extends Service
 {
+    private const NAMESPACE = '/messenger/v1';
+
     public function getExternalLines(): Response
     {
         return $this->http->connector()->send(new GetExternalLinesRequest());
@@ -77,5 +79,221 @@ class MessengerService extends Service
     public function updateMessageStatus(string $messageId, UpdateMessageStatusDTO $payload): Response
     {
         return $this->http->connector()->send(new UpdateMessageStatusRequest($messageId, $payload));
+    }
+
+    /**
+     * Get chats.
+     *
+     * @param  array  $params  chat fetch params (status, type, ...)
+     */
+    public function getChats(array $params = []): Response
+    {
+        return $this->http->get(self::NAMESPACE . '/chats', $params);
+    }
+
+    /**
+     * Get a cursor-paginated page of external chats for one status bucket.
+     *
+     * @param  array  $params  chat fetch params (cursor, limit, status, ...)
+     */
+    public function getExternalChatsPage(array $params = []): Response
+    {
+        return $this->http->get(self::NAMESPACE . '/chats', array_merge($params, ['type' => 'EXTERNAL']));
+    }
+
+    /**
+     * Get messages of a chat.
+     *
+     * @param  array  $params  message fetch params (chatId, timestamps, ...)
+     */
+    public function getMessages(array $params = []): Response
+    {
+        return $this->http->get(self::NAMESPACE . '/messages/', $params);
+    }
+
+    /**
+     * Get the pinned messages of a chat.
+     *
+     * @param  int|string  $chatId
+     */
+    public function getPinnedMessages($chatId): Response
+    {
+        return $this->http->get(self::NAMESPACE . '/messages/getPinnedMessages/', ['chatId' => $chatId]);
+    }
+
+    /**
+     * Mark all messages in a chat as read.
+     *
+     * @param  int|string  $chatId
+     */
+    public function readAllMessages($chatId): Response
+    {
+        return $this->http->post(self::NAMESPACE . '/messages/readAll/', ['chatId' => $chatId]);
+    }
+
+    /**
+     * Create a messenger widget.
+     */
+    public function createWidget(array $data): Response
+    {
+        return $this->http->post(self::NAMESPACE . '/widgets', $data);
+    }
+
+    /**
+     * Get messenger widgets.
+     */
+    public function getWidgets(?int $limit = null, ?int $page = null): Response
+    {
+        return $this->http->get(self::NAMESPACE . '/widgets', ['limit' => $limit, 'page' => $page]);
+    }
+
+    /**
+     * Update a messenger widget.
+     *
+     * @param  int|string  $id
+     */
+    public function updateWidget($id, array $data): Response
+    {
+        return $this->http->patch(self::NAMESPACE . "/widgets/{$id}", $data);
+    }
+
+    /**
+     * Delete a messenger widget.
+     *
+     * @param  int|string  $id
+     */
+    public function deleteWidget($id): Response
+    {
+        return $this->http->delete(self::NAMESPACE . "/widgets/{$id}");
+    }
+
+    /**
+     * Get quick answers (quick replies).
+     *
+     * @param  array  $params  filter params
+     */
+    public function getQuickAnswers(array $params = []): Response
+    {
+        return $this->http->get(self::NAMESPACE . '/quick-replies', $params);
+    }
+
+    /**
+     * Get a quick answer by id.
+     *
+     * @param  int|string  $id
+     */
+    public function getQuickAnswerById($id): Response
+    {
+        return $this->http->get(self::NAMESPACE . "/quick-replies/{$id}");
+    }
+
+    /**
+     * Create a quick answer.
+     */
+    public function createQuickAnswer(array $data): Response
+    {
+        return $this->http->post(self::NAMESPACE . '/quick-replies', $data);
+    }
+
+    /**
+     * Update a quick answer.
+     *
+     * @param  int|string  $id
+     */
+    public function updateQuickAnswer($id, array $data): Response
+    {
+        return $this->http->patch(self::NAMESPACE . "/quick-replies/{$id}", $data);
+    }
+
+    /**
+     * Update a quick answer's status.
+     *
+     * @param  int|string  $id
+     */
+    public function updateQuickAnswerStatus($id, string $status): Response
+    {
+        return $this->http->patch(self::NAMESPACE . "/quick-replies/{$id}/status/{$status}");
+    }
+
+    /**
+     * Delete a quick answer.
+     *
+     * @param  int|string  $id
+     */
+    public function deleteQuickAnswer($id): Response
+    {
+        return $this->http->delete(self::NAMESPACE . "/quick-replies/{$id}");
+    }
+
+    /**
+     * Get the entities related to a chat.
+     *
+     * @param  int|string  $chatId
+     */
+    public function getChatRelations($chatId): Response
+    {
+        return $this->http->get(self::NAMESPACE . '/chat-entity-relations', [
+            'chatId' => $chatId,
+            'entityType' => 'task',
+        ]);
+    }
+
+    /**
+     * Get the chats related to a task/entity.
+     *
+     * @param  int|string  $entityId
+     */
+    public function getTaskRelations($entityId): Response
+    {
+        return $this->http->get(self::NAMESPACE . '/chat-entity-relations/chats-by-entity', [
+            'entityId' => $entityId,
+            'entityType' => 'task',
+        ]);
+    }
+
+    /**
+     * Create a chat/entity relation.
+     *
+     * @param  int|string  $chatId
+     * @param  int|string  $entityId
+     */
+    public function createChatRelation($chatId, $entityId): Response
+    {
+        return $this->http->post(self::NAMESPACE . '/chat-entity-relations', [
+            'chatId' => $chatId,
+            'entityId' => $entityId,
+            'entityType' => 'task',
+        ]);
+    }
+
+    /**
+     * Delete a chat/entity relation.
+     *
+     * @param  int|string  $chatId
+     * @param  int|string  $entityId
+     */
+    public function deleteChatRelation($chatId, $entityId): Response
+    {
+        return $this->http->delete(self::NAMESPACE . '/chat-entity-relations/by-entity', [], [
+            'chatId' => $chatId,
+            'entityId' => $entityId,
+            'entityType' => 'task',
+        ]);
+    }
+
+    /**
+     * Get the current user's messenger settings.
+     */
+    public function getSettings(): Response
+    {
+        return $this->http->get(self::NAMESPACE . '/user-settings');
+    }
+
+    /**
+     * Update the current user's messenger settings.
+     */
+    public function updateSettings(array $settings): Response
+    {
+        return $this->http->patch(self::NAMESPACE . '/user-settings', $settings);
     }
 }

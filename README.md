@@ -134,10 +134,19 @@ $sdk->crm()->createTask(['title' => 'Follow up']);
 
 ```php
 $sdk->tasks()->getTasks(['page' => 1]);
+$sdk->tasks()->getTask(15, ['crm_entity_list' => true]);
 $sdk->tasks()->createTask(['title' => 'Ship SDK', 'responsibleId' => 7]);
-$sdk->tasks()->patchTask(15, ['title' => 'Ship SDK v1']);
+$sdk->tasks()->updateTaskStatus(15, 'in_work');
+$sdk->tasks()->delegateTask(15, 42);
 $sdk->tasks()->markTaskReady(15);
-$sdk->tasks()->getKanbanStages(['groupId' => 3]);
+$sdk->tasks()->massDeletionTasks(taskIds: ['15', '16']);
+
+// Templates, checklists, transfers, trash
+$sdk->tasks()->getRecurringTemplates();
+$sdk->tasks()->createChecklist(15, ['name' => 'Launch']);
+$sdk->tasks()->createChecklistItem(9, ['text' => 'Write tests']);
+$sdk->tasks()->transferTasksToUser(['from_user_id' => 1, 'to_user_id' => 2]);
+$sdk->tasks()->getTrashTasks();
 ```
 
 ### Users & departments
@@ -145,7 +154,13 @@ $sdk->tasks()->getKanbanStages(['groupId' => 3]);
 ```php
 $sdk->users()->getAllUsers();
 $sdk->users()->getUsers(['page' => 2, 'list' => 20]);
-$sdk->users()->patchUser(7, ['position' => 'CTO']);
+$sdk->users()->updateUser(7, ['position' => 'CTO']);
+$sdk->users()->deactivateUser(7);
+$sdk->users()->updateRoles(7, ['admin']);
+$sdk->users()->get2FaStatus(7);
+$sdk->users()->search(['q' => 'ada@example.com']);
+$sdk->users()->getUsersOnlineStatuses();
+$sdk->users()->uploadAvatar(file_get_contents('/path/avatar.png'), userId: 7, filename: 'avatar.png');
 
 $sdk->departments()->getDepartments();
 $sdk->departments()->addUsers(4, [7, 8, 9]);
@@ -170,6 +185,14 @@ $sdk->files()->deleteFilesByEntity('deals', 42);
 $sdk->messenger()->getExternalLines();
 $sdk->messenger()->createMessage(['chatId' => 1, 'text' => 'Hello']);
 $sdk->messenger()->goToMessage('message-id');
+
+// Chats, messages, widgets, quick replies, relations, settings
+$sdk->messenger()->getChats(['status' => 'open']);
+$sdk->messenger()->getMessages(['chatId' => 1]);
+$sdk->messenger()->readAllMessages(1);
+$sdk->messenger()->createQuickAnswer(['title' => 'Greeting', 'text' => 'Hi!']);
+$sdk->messenger()->getChatRelations(1);
+$sdk->messenger()->updateSettings(['sound' => false]);
 ```
 
 ### Auth
