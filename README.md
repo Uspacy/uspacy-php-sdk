@@ -47,6 +47,7 @@ Most methods return a raw `Saloon\Http\Response`. Selected services return
 - **Users** — see the [Users service guide](docs/users.md).
 - **CRM entities** — see the [CRM service guide](docs/crm.md).
 - **Tasks** — see the [Tasks service guide](docs/tasks.md).
+- **Messenger** (partial) — see the [Messenger service guide](docs/messenger.md).
 
 Every output DTO keeps the **full raw payload**, so portal-specific **custom
 fields are never dropped**. Read them with `get()` / `has()`:
@@ -64,6 +65,7 @@ $user->raw;                    // the complete, untouched API payload
 - [Users](docs/users.md) — full DTO reference and examples.
 - [CRM entities](docs/crm.md) — entity + field DTOs, custom fields.
 - [Tasks](docs/tasks.md) — task + field DTOs, checklists, custom fields.
+- [Messenger](docs/messenger.md) — quick answers, chats, settings (partial).
 
 ## Architecture
 
