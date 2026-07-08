@@ -4,6 +4,9 @@ namespace Uspacy\SDK\Services;
 
 use Saloon\Http\Response;
 use Uspacy\SDK\DTOs\Messages\UpdateMessageStatusDTO;
+use Uspacy\SDK\DTOs\Messenger\ChatDTO;
+use Uspacy\SDK\DTOs\Messenger\QuickAnswerDTO;
+use Uspacy\SDK\DTOs\Messenger\UserSettingsDTO;
 use Uspacy\SDK\Http\Client\Requests\Messenger\CreateChatRequest;
 use Uspacy\SDK\Http\Client\Requests\Messenger\CreateExternalLineRequest;
 use Uspacy\SDK\Http\Client\Requests\Messenger\CreateMessageRequest;
@@ -85,10 +88,13 @@ class MessengerService extends Service
      * Get chats.
      *
      * @param  array  $params  chat fetch params (status, type, ...)
+     * @return array<int, ChatDTO>
      */
-    public function getChats(array $params = []): Response
+    public function getChats(array $params = []): array
     {
-        return $this->http->get(self::NAMESPACE . '/chats', $params);
+        $data = $this->http->get(self::NAMESPACE . '/chats', $params)->json() ?? [];
+
+        return array_map([ChatDTO::class, 'fromArray'], array_filter($data, 'is_array'));
     }
 
     /**
@@ -171,10 +177,13 @@ class MessengerService extends Service
      * Get quick answers (quick replies).
      *
      * @param  array  $params  filter params
+     * @return array<int, QuickAnswerDTO>
      */
-    public function getQuickAnswers(array $params = []): Response
+    public function getQuickAnswers(array $params = []): array
     {
-        return $this->http->get(self::NAMESPACE . '/quick-replies', $params);
+        $data = $this->http->get(self::NAMESPACE . '/quick-replies', $params)->json() ?? [];
+
+        return array_map([QuickAnswerDTO::class, 'fromArray'], array_filter($data, 'is_array'));
     }
 
     /**
@@ -182,17 +191,17 @@ class MessengerService extends Service
      *
      * @param  int|string  $id
      */
-    public function getQuickAnswerById($id): Response
+    public function getQuickAnswerById($id): QuickAnswerDTO
     {
-        return $this->http->get(self::NAMESPACE . "/quick-replies/{$id}");
+        return QuickAnswerDTO::fromArray($this->http->get(self::NAMESPACE . "/quick-replies/{$id}")->json() ?? []);
     }
 
     /**
      * Create a quick answer.
      */
-    public function createQuickAnswer(array $data): Response
+    public function createQuickAnswer(array $data): QuickAnswerDTO
     {
-        return $this->http->post(self::NAMESPACE . '/quick-replies', $data);
+        return QuickAnswerDTO::fromArray($this->http->post(self::NAMESPACE . '/quick-replies', $data)->json() ?? []);
     }
 
     /**
@@ -200,9 +209,9 @@ class MessengerService extends Service
      *
      * @param  int|string  $id
      */
-    public function updateQuickAnswer($id, array $data): Response
+    public function updateQuickAnswer($id, array $data): QuickAnswerDTO
     {
-        return $this->http->patch(self::NAMESPACE . "/quick-replies/{$id}", $data);
+        return QuickAnswerDTO::fromArray($this->http->patch(self::NAMESPACE . "/quick-replies/{$id}", $data)->json() ?? []);
     }
 
     /**
@@ -210,9 +219,9 @@ class MessengerService extends Service
      *
      * @param  int|string  $id
      */
-    public function updateQuickAnswerStatus($id, string $status): Response
+    public function updateQuickAnswerStatus($id, string $status): QuickAnswerDTO
     {
-        return $this->http->patch(self::NAMESPACE . "/quick-replies/{$id}/status/{$status}");
+        return QuickAnswerDTO::fromArray($this->http->patch(self::NAMESPACE . "/quick-replies/{$id}/status/{$status}")->json() ?? []);
     }
 
     /**
@@ -287,16 +296,16 @@ class MessengerService extends Service
     /**
      * Get the current user's messenger settings.
      */
-    public function getSettings(): Response
+    public function getSettings(): UserSettingsDTO
     {
-        return $this->http->get(self::NAMESPACE . '/user-settings');
+        return UserSettingsDTO::fromArray($this->http->get(self::NAMESPACE . '/user-settings')->json() ?? []);
     }
 
     /**
      * Update the current user's messenger settings.
      */
-    public function updateSettings(array $settings): Response
+    public function updateSettings(array $settings): UserSettingsDTO
     {
-        return $this->http->patch(self::NAMESPACE . '/user-settings', $settings);
+        return UserSettingsDTO::fromArray($this->http->patch(self::NAMESPACE . '/user-settings', $settings)->json() ?? []);
     }
 }
