@@ -3,6 +3,8 @@
 namespace Uspacy\SDK\Services;
 
 use Saloon\Http\Response;
+use Uspacy\SDK\DTOs\Crm\ProductForEntityDTO;
+use Uspacy\SDK\DTOs\Crm\ProductInfoForEntityDTO;
 
 /**
  * CRM "products for entity" service (line products attached to CRM records).
@@ -23,12 +25,12 @@ class CrmProductsForEntityService extends Service
      * @param  string  $entityType
      * @param  int|string  $entityId
      */
-    public function getInfoProductsForEntity(string $entityType, $entityId): Response
+    public function getInfoProductsForEntity(string $entityType, $entityId): ProductInfoForEntityDTO
     {
-        return $this->http->get(self::INFO_NAMESPACE, [
+        return ProductInfoForEntityDTO::fromArray($this->http->get(self::INFO_NAMESPACE, [
             'entity_type' => $entityType,
             'entity_id' => $entityId,
-        ]);
+        ])->json() ?? []);
     }
 
     /**
@@ -36,17 +38,21 @@ class CrmProductsForEntityService extends Service
      *
      * @param  int|string  $id
      */
-    public function updateInfoProductForEntity($id, array $info): Response
+    public function updateInfoProductForEntity($id, array $info): ProductInfoForEntityDTO
     {
-        return $this->http->patch(self::INFO_NAMESPACE . "/{$id}", $info);
+        return ProductInfoForEntityDTO::fromArray($this->http->patch(self::INFO_NAMESPACE . "/{$id}", $info)->json() ?? []);
     }
 
     /**
      * Get all line products.
+     *
+     * @return array<int, ProductForEntityDTO>
      */
-    public function getProductsForEntity(): Response
+    public function getProductsForEntity(): array
     {
-        return $this->http->get(self::NAMESPACE);
+        $data = $this->http->get(self::NAMESPACE)->json() ?? [];
+
+        return array_map([ProductForEntityDTO::class, 'fromArray'], array_filter($data, 'is_array'));
     }
 
     /**
@@ -54,17 +60,17 @@ class CrmProductsForEntityService extends Service
      *
      * @param  int|string  $id
      */
-    public function getProductForEntity($id): Response
+    public function getProductForEntity($id): ProductForEntityDTO
     {
-        return $this->http->get(self::NAMESPACE . "/{$id}");
+        return ProductForEntityDTO::fromArray($this->http->get(self::NAMESPACE . "/{$id}")->json() ?? []);
     }
 
     /**
      * Create a line product.
      */
-    public function createProductForEntity(array $data): Response
+    public function createProductForEntity(array $data): ProductInfoForEntityDTO
     {
-        return $this->http->post(self::NAMESPACE, $data);
+        return ProductInfoForEntityDTO::fromArray($this->http->post(self::NAMESPACE, $data)->json() ?? []);
     }
 
     /**
@@ -72,29 +78,35 @@ class CrmProductsForEntityService extends Service
      *
      * @param  int|string  $id
      */
-    public function updateProductForEntity($id, array $data): Response
+    public function updateProductForEntity($id, array $data): ProductForEntityDTO
     {
-        return $this->http->patch(self::NAMESPACE . "/{$id}", $data);
+        return ProductForEntityDTO::fromArray($this->http->patch(self::NAMESPACE . "/{$id}", $data)->json() ?? []);
     }
 
     /**
      * Bulk create line products.
      *
      * @param  array  $listProducts  list of line products
+     * @return array<int, ProductForEntityDTO>
      */
-    public function createProductsForEntity(array $listProducts): Response
+    public function createProductsForEntity(array $listProducts): array
     {
-        return $this->http->post(self::NAMESPACE . '/bulk', ['list_products' => $listProducts]);
+        $data = $this->http->post(self::NAMESPACE . '/bulk', ['list_products' => $listProducts])->json() ?? [];
+
+        return array_map([ProductForEntityDTO::class, 'fromArray'], array_filter($data, 'is_array'));
     }
 
     /**
      * Bulk update line products.
      *
      * @param  array  $listProducts  list of line products
+     * @return array<int, ProductForEntityDTO>
      */
-    public function updateProductsForEntity(array $listProducts): Response
+    public function updateProductsForEntity(array $listProducts): array
     {
-        return $this->http->patch(self::NAMESPACE . '/bulk', ['list_products' => $listProducts]);
+        $data = $this->http->patch(self::NAMESPACE . '/bulk', ['list_products' => $listProducts])->json() ?? [];
+
+        return array_map([ProductForEntityDTO::class, 'fromArray'], array_filter($data, 'is_array'));
     }
 
     /**

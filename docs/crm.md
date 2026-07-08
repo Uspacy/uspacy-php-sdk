@@ -150,5 +150,62 @@ $sdk->crmDealsStages()->deleteReason(9);                       // raw Response
 | `createReason`, `updateReason`, `createStageReason`, `updateStageReason` | `ReasonDTO` |
 | `deleteFunnel`, `deleteStage`, `deleteReason`, `deleteStageReason` | `Saloon\Http\Response` |
 
-> Products, catalog, requisites and document templates are typed with the same
-> ruleset in follow-up work.
+## Products & catalog
+
+```php
+// Products -> Collection<ProductDTO>
+$page = $sdk->crmProducts()->getProducts(['page' => 1]);
+$page->data[0]->title;
+$page->data[0]->isActive;
+$page->data[0]->get('customfield_1');   // products carry custom fields too
+
+$sdk->crmProducts()->createProduct(['title' => 'Widget']);   // ProductDTO
+$sdk->crmProducts()->updateProduct(3, ['title' => 'Widget2']); // ProductDTO
+$sdk->crmProducts()->deleteProduct(3);                        // raw Response
+
+// Product fields -> FieldDTO[] (dynamic namespace)
+$sdk->crmProducts()->getFields();
+$sdk->crmProducts()->createField(['name' => 'Colour', 'code' => 'colour']); // FieldDTO
+
+// Catalog references -> DTO[]
+$sdk->crmProductsCategories()->getProductCategories(); // CategoryDTO[] (nested childCategories)
+$sdk->crmProductsUnits()->getProductUnits();           // UnitDTO[]
+$sdk->crmProductsTaxes()->getProductTaxes();           // TaxDTO[]
+$sdk->crmProductsPriceTypes()->getProductPriceTypes(); // PriceTypeDTO[]
+
+// each supports create/update -> DTO, delete -> raw Response
+$sdk->crmProductsTaxes()->createProductTax(['name' => 'VAT', 'rate' => 20]); // TaxDTO
+```
+
+### Line products (products attached to an entity)
+
+```php
+// Aggregated info -> ProductInfoForEntityDTO (nested listProducts)
+$info = $sdk->crmProductsForEntity()->getInfoProductsForEntity('deals', 42);
+$info->amountTotal;
+$info->listProducts[0]->title;   // nested ProductForEntityDTO
+
+// Line products
+$sdk->crmProductsForEntity()->getProductsForEntity();      // ProductForEntityDTO[]
+$sdk->crmProductsForEntity()->getProductForEntity(7);      // ProductForEntityDTO
+$sdk->crmProductsForEntity()->updateProductForEntity(7, ['quantity' => 3]); // ProductForEntityDTO
+$sdk->crmProductsForEntity()->createProductsForEntity([['product_id' => 1, 'quantity' => 2]]); // ProductForEntityDTO[]
+$sdk->crmProductsForEntity()->deleteProductsForEntity([1, 2]); // raw Response
+```
+
+### Return-type reference (products & catalog)
+
+| Method | Returns |
+| --- | --- |
+| `crmProducts()->getProducts` | `Collection<ProductDTO>` |
+| `crmProducts()->createProduct` / `updateProduct` | `ProductDTO` |
+| `crmProducts()->getFields` | `FieldDTO[]` |
+| `crmProducts()->createField` / `updateField` | `FieldDTO` |
+| `crmProductsCategories/Units/Taxes/PriceTypes()->get…` | `CategoryDTO[]` / `UnitDTO[]` / `TaxDTO[]` / `PriceTypeDTO[]` |
+| … `->create…` / `->update…` | the matching single DTO |
+| `crmProductsForEntity()->getInfoProductsForEntity` / `updateInfoProductForEntity` / `createProductForEntity` | `ProductInfoForEntityDTO` |
+| `crmProductsForEntity()->getProductForEntity` / `updateProductForEntity` | `ProductForEntityDTO` |
+| `crmProductsForEntity()->getProductsForEntity` / `create…` / `update…` (bulk) | `ProductForEntityDTO[]` |
+| all delete / mass / list-value methods | `Saloon\Http\Response` |
+
+> Requisites and document templates are typed with the same ruleset in follow-up work.
