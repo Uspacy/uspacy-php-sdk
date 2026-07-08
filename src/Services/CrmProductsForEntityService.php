@@ -20,6 +20,7 @@ class CrmProductsForEntityService extends Service
     /**
      * Get aggregated product info attached to an entity.
      *
+     * @param  string  $entityType
      * @param  int|string  $entityId
      */
     public function getInfoProductsForEntity(string $entityType, $entityId): Response

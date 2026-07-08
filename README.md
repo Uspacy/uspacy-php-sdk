@@ -70,9 +70,9 @@ Dedicated, entity-scoped CRM services mirroring the JS SDK:
 
 | Accessor | Service | Scope |
 | --- | --- | --- |
-| `$sdk->crmDeals()` / `crmLeads()` / `crmContacts()` / `crmCompanies()` | `CrmEntityService` | `/crm/v1/entities/{type}` |
-| `$sdk->crmDealsFunnels()` / `crmLeadsFunnels()` | `CrmFunnelsService` | funnels, stages, reasons |
-| `$sdk->crmDealsStages()` / `crmLeadsStages()` | `CrmStagesService` | stages, reasons |
+| `$sdk->crmDeals()` / `$sdk->crmLeads()` / `$sdk->crmContacts()` / `$sdk->crmCompanies()` | `CrmEntityService` | `/crm/v1/entities/{type}` |
+| `$sdk->crmDealsFunnels()` / `$sdk->crmLeadsFunnels()` | `CrmFunnelsService` | funnels, stages, reasons |
+| `$sdk->crmDealsStages()` / `$sdk->crmLeadsStages()` | `CrmStagesService` | stages, reasons |
 | `$sdk->crmProducts()` | `CrmProductsService` | `/crm/v1/static/products` |
 | `$sdk->crmProductsCategories()` | `CrmProductsCategoryService` | `/crm/v1/static/product-categories` |
 | `$sdk->crmProductsUnits()` | `CrmProductsUnitService` | `/crm/v1/static/measurement-units` |
