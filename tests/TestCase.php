@@ -10,6 +10,7 @@ use Saloon\Http\Request;
 use Uspacy\SDK\Http\Client\Requests\DeleteRequest;
 use Uspacy\SDK\Http\Client\Requests\FormPostRequest;
 use Uspacy\SDK\Http\Client\Requests\GetRequest;
+use Uspacy\SDK\Http\Client\Requests\MultipartPostRequest;
 use Uspacy\SDK\Http\Client\Requests\PatchRequest;
 use Uspacy\SDK\Http\Client\Requests\PostRequest;
 use Uspacy\SDK\Http\Client\Requests\PutRequest;
@@ -55,6 +56,7 @@ abstract class TestCase extends OrchestraTestCase
             PutRequest::class => $ok,
             DeleteRequest::class => MockResponse::make([], 204),
             FormPostRequest::class => MockResponse::make(['id' => 1], 201),
+            MultipartPostRequest::class => MockResponse::make(['id' => 1], 201),
         ]);
     }
 
