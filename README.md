@@ -164,6 +164,7 @@ try {
 
 ```bash
 composer install
+composer test       # run the PHPUnit suite (Saloon MockClient, no network)
 composer check-cs   # code style (ECS, PSR-12 + clean-code)
 composer fix-cs     # auto-fix style
 ```

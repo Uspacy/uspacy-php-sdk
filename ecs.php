@@ -6,6 +6,7 @@ use Symplify\EasyCodingStandard\ValueObject\Set\SetList;
 return ECSConfig::configure()
     ->withPaths([
         __DIR__ . '/src',
+        __DIR__ . '/tests',
     ])
     ->withSkip([
         __DIR__ . '/vendor',
