@@ -98,5 +98,57 @@ $sdk->crmDeals()->deleteListValue('priority', 'value-id');
 | `getField`, `createField`, `updateField` | `FieldDTO` |
 | `deleteEntity`, `massDeletion`, `massEditing`, `massEditEntities`, `deleteField`, `updateListValues`, `deleteListValue` | `Saloon\Http\Response` |
 
-> Funnels, stages, products, catalog, requisites and document templates are typed
-> with the same ruleset in follow-up work.
+## Funnels, stages & reasons
+
+`$sdk->crmDealsFunnels()` / `crmLeadsFunnels()` (`CrmFunnelsService`) and
+`$sdk->crmDealsStages()` / `crmLeadsStages()` (`CrmStagesService`) return typed
+funnel/stage/reason DTOs. Nested collections are hydrated too, so a funnel's
+stages and a stage's reasons are typed all the way down.
+
+```php
+// Funnels -> FunnelDTO[] (with nested stages)
+$funnels = $sdk->crmDealsFunnels()->getFunnels();
+$funnels[0]->title;
+$funnels[0]->funnelCode;
+$funnels[0]->isDefault;               // bool (API field: default)
+$funnels[0]->stages[0]->stageCode;    // nested StageDTO
+
+$sdk->crmDealsFunnels()->createFunnel(['title' => 'Sales']);   // FunnelDTO
+$sdk->crmDealsFunnels()->updateFunnel(3, ['title' => 'B2B']);  // FunnelDTO
+$sdk->crmDealsFunnels()->deleteFunnel(3);                      // raw Response
+
+// Stages -> StageDTO[]
+$stages = $sdk->crmDealsStages()->getStages();
+$stages[0]->stageCode;
+$stages[0]->color;
+$stages[0]->reasons;                  // nested ReasonDTO[]
+$sdk->crmDealsFunnels()->getStagesByFunnel(3);                 // StageDTO[]
+
+$sdk->crmDealsStages()->createStage(['title' => 'New']);       // StageDTO
+$sdk->crmDealsStages()->updateStage(10, ['color' => '#fff']);  // StageDTO
+$sdk->crmDealsStages()->deleteStage(10);                       // raw Response
+
+// Reasons -> ReasonsDTO (grouped success / fail)
+$reasons = $sdk->crmDealsStages()->getReasons(42);
+$reasons->success;   // ReasonDTO[]
+$reasons->fail;      // ReasonDTO[]
+
+$sdk->crmDealsStages()->createReason(42, ['title' => 'Won']);  // ReasonDTO
+$sdk->crmDealsFunnels()->createStageReason(3, ['title' => 'Lost']); // ReasonDTO
+$sdk->crmDealsStages()->deleteReason(9);                       // raw Response
+```
+
+### Return-type reference (funnels & stages)
+
+| Method | Returns |
+| --- | --- |
+| `getFunnels` | `FunnelDTO[]` |
+| `createFunnel`, `updateFunnel` | `FunnelDTO` |
+| `getStages`, `getStagesByFunnel` | `StageDTO[]` |
+| `createStage`, `updateStage` | `StageDTO` |
+| `getReasons` | `ReasonsDTO` (grouped `success` / `fail`) |
+| `createReason`, `updateReason`, `createStageReason`, `updateStageReason` | `ReasonDTO` |
+| `deleteFunnel`, `deleteStage`, `deleteReason`, `deleteStageReason` | `Saloon\Http\Response` |
+
+> Products, catalog, requisites and document templates are typed with the same
+> ruleset in follow-up work.
