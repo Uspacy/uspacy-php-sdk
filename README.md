@@ -45,6 +45,7 @@ Most methods return a raw `Saloon\Http\Response`. Selected services return
 
 - **Auth** — `applicationSignIn()` / `refreshToken()` return a `Tokens` DTO.
 - **Users** — see the [Users service guide](docs/users.md).
+- **CRM entities** — see the [CRM service guide](docs/crm.md).
 
 Every output DTO keeps the **full raw payload**, so portal-specific **custom
 fields are never dropped**. Read them with `get()` / `has()`:
@@ -60,6 +61,7 @@ $user->raw;                    // the complete, untouched API payload
 ### Service guides
 
 - [Users](docs/users.md) — full DTO reference and examples.
+- [CRM entities](docs/crm.md) — entity + field DTOs, custom fields.
 
 ## Architecture
 

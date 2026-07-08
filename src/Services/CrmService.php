@@ -3,6 +3,9 @@
 namespace Uspacy\SDK\Services;
 
 use Saloon\Http\Response;
+use Uspacy\SDK\DTOs\Collection;
+use Uspacy\SDK\DTOs\Crm\EntityDTO;
+use Uspacy\SDK\DTOs\Crm\FieldDTO;
 
 /**
  * CRM service.
@@ -29,27 +32,45 @@ class CrmService extends Service
      * @param  string  $entityType  e.g. contacts, companies, leads, deals or a custom type
      * @param  array  $params  query parameters (page, list, filters, ...)
      */
-    public function getEntities(string $entityType, array $params = []): Response
+    /**
+     * @return Collection<EntityDTO>
+     */
+    public function getEntities(string $entityType, array $params = []): Collection
     {
-        return $this->http->get(self::NAMESPACE . "/entities/{$entityType}/", $params);
+        return Collection::fromArray(
+            $this->http->get(self::NAMESPACE . "/entities/{$entityType}/", $params)->json() ?? [],
+            [EntityDTO::class, 'fromArray'],
+        );
     }
 
-    public function getContacts(array $params = []): Response
+    /**
+     * @return Collection<EntityDTO>
+     */
+    public function getContacts(array $params = []): Collection
     {
         return $this->getEntities('contacts', $params);
     }
 
-    public function getCompanies(array $params = []): Response
+    /**
+     * @return Collection<EntityDTO>
+     */
+    public function getCompanies(array $params = []): Collection
     {
         return $this->getEntities('companies', $params);
     }
 
-    public function getLeads(array $params = []): Response
+    /**
+     * @return Collection<EntityDTO>
+     */
+    public function getLeads(array $params = []): Collection
     {
         return $this->getEntities('leads', $params);
     }
 
-    public function getDeals(array $params = []): Response
+    /**
+     * @return Collection<EntityDTO>
+     */
+    public function getDeals(array $params = []): Collection
     {
         return $this->getEntities('deals', $params);
     }
@@ -57,27 +78,27 @@ class CrmService extends Service
     /**
      * Create an entity of the given type.
      */
-    public function createEntity(string $entityType, array $data): Response
+    public function createEntity(string $entityType, array $data): EntityDTO
     {
-        return $this->http->post(self::NAMESPACE . "/entities/{$entityType}/", $data);
+        return EntityDTO::fromArray($this->http->post(self::NAMESPACE . "/entities/{$entityType}/", $data)->json() ?? []);
     }
 
-    public function createContact(array $data): Response
+    public function createContact(array $data): EntityDTO
     {
         return $this->createEntity('contacts', $data);
     }
 
-    public function createCompany(array $data): Response
+    public function createCompany(array $data): EntityDTO
     {
         return $this->createEntity('companies', $data);
     }
 
-    public function createLead(array $data): Response
+    public function createLead(array $data): EntityDTO
     {
         return $this->createEntity('leads', $data);
     }
 
-    public function createDeal(array $data): Response
+    public function createDeal(array $data): EntityDTO
     {
         return $this->createEntity('deals', $data);
     }
@@ -87,9 +108,9 @@ class CrmService extends Service
      *
      * @param  int|string  $id
      */
-    public function patchEntity(string $entityType, $id, array $data): Response
+    public function patchEntity(string $entityType, $id, array $data): EntityDTO
     {
-        return $this->http->patch(self::NAMESPACE . "/entities/{$entityType}/{$id}", $data);
+        return EntityDTO::fromArray($this->http->patch(self::NAMESPACE . "/entities/{$entityType}/{$id}", $data)->json() ?? []);
     }
 
     /**
@@ -102,26 +123,34 @@ class CrmService extends Service
 
     /**
      * Get all fields for an entity type.
+     *
+     * @return array<int, FieldDTO>
      */
-    public function getFields(string $entityType): Response
+    public function getFields(string $entityType): array
     {
-        return $this->http->get(self::NAMESPACE . "/entities/{$entityType}/fields");
+        $data = $this->http->get(self::NAMESPACE . "/entities/{$entityType}/fields")->json() ?? [];
+
+        return array_map([FieldDTO::class, 'fromArray'], $data['data'] ?? []);
     }
 
     /**
      * Get a single field definition by its type/code.
      */
-    public function getField(string $entityType, string $fieldType): Response
+    public function getField(string $entityType, string $fieldType): FieldDTO
     {
-        return $this->http->get(self::NAMESPACE . "/entities/{$entityType}/fields/{$fieldType}");
+        return FieldDTO::fromArray(
+            $this->http->get(self::NAMESPACE . "/entities/{$entityType}/fields/{$fieldType}")->json() ?? [],
+        );
     }
 
     /**
      * Create a field for an entity type.
      */
-    public function createField(string $entityType, array $data): Response
+    public function createField(string $entityType, array $data): FieldDTO
     {
-        return $this->http->post(self::NAMESPACE . "/entities/{$entityType}/fields", $data);
+        return FieldDTO::fromArray(
+            $this->http->post(self::NAMESPACE . "/entities/{$entityType}/fields", $data)->json() ?? [],
+        );
     }
 
     /**

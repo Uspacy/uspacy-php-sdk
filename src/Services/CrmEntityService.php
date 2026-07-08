@@ -3,6 +3,9 @@
 namespace Uspacy\SDK\Services;
 
 use Saloon\Http\Response;
+use Uspacy\SDK\DTOs\Collection;
+use Uspacy\SDK\DTOs\Crm\EntityDTO;
+use Uspacy\SDK\DTOs\Crm\FieldDTO;
 use Uspacy\SDK\Http\Client\HttpClient;
 
 /**
@@ -26,18 +29,22 @@ class CrmEntityService extends Service
      * Get a page of entities.
      *
      * @param  array  $params  query parameters (page, list, filters, ...)
+     * @return Collection<EntityDTO>
      */
-    public function getEntities(array $params = []): Response
+    public function getEntities(array $params = []): Collection
     {
-        return $this->http->get($this->namespace(), $params);
+        return Collection::fromArray(
+            $this->http->get($this->namespace(), $params)->json() ?? [],
+            [EntityDTO::class, 'fromArray'],
+        );
     }
 
     /**
      * Create an entity.
      */
-    public function createEntity(array $data): Response
+    public function createEntity(array $data): EntityDTO
     {
-        return $this->http->post($this->namespace(), $data);
+        return EntityDTO::fromArray($this->http->post($this->namespace(), $data)->json() ?? []);
     }
 
     /**
@@ -45,9 +52,9 @@ class CrmEntityService extends Service
      *
      * @param  int|string  $id
      */
-    public function updateEntity($id, array $data): Response
+    public function updateEntity($id, array $data): EntityDTO
     {
-        return $this->http->patch($this->namespace() . "/{$id}", $data);
+        return EntityDTO::fromArray($this->http->patch($this->namespace() . "/{$id}", $data)->json() ?? []);
     }
 
     /**
@@ -100,26 +107,30 @@ class CrmEntityService extends Service
 
     /**
      * Get the fields of this entity type.
+     *
+     * @return array<int, FieldDTO>
      */
-    public function getFields(): Response
+    public function getFields(): array
     {
-        return $this->http->get($this->namespace() . '/fields');
+        $data = $this->http->get($this->namespace() . '/fields')->json() ?? [];
+
+        return array_map([FieldDTO::class, 'fromArray'], $data['data'] ?? []);
     }
 
     /**
      * Create a field.
      */
-    public function createField(array $data): Response
+    public function createField(array $data): FieldDTO
     {
-        return $this->http->post($this->namespace() . '/fields', $data);
+        return FieldDTO::fromArray($this->http->post($this->namespace() . '/fields', $data)->json() ?? []);
     }
 
     /**
      * Update a field by its code.
      */
-    public function updateField(string $code, array $data): Response
+    public function updateField(string $code, array $data): FieldDTO
     {
-        return $this->http->patch($this->namespace() . "/fields/{$code}", $data);
+        return FieldDTO::fromArray($this->http->patch($this->namespace() . "/fields/{$code}", $data)->json() ?? []);
     }
 
     /**
@@ -152,10 +163,14 @@ class CrmEntityService extends Service
      * Get entities that belong to a kanban stage.
      *
      * @param  int|string  $stageId
+     * @return Collection<EntityDTO>
      */
-    public function getByStage($stageId): Response
+    public function getByStage($stageId): Collection
     {
-        return $this->http->get($this->namespace() . "/kanban/stage/{$stageId}");
+        return Collection::fromArray(
+            $this->http->get($this->namespace() . "/kanban/stage/{$stageId}")->json() ?? [],
+            [EntityDTO::class, 'fromArray'],
+        );
     }
 
     /**
@@ -165,12 +180,12 @@ class CrmEntityService extends Service
      * @param  int|string  $stageId
      * @param  int|string|null  $reasonId  fail reason id, when the target stage requires one
      */
-    public function moveFromStageToStage($entityId, $stageId, $reasonId = null): Response
+    public function moveFromStageToStage($entityId, $stageId, $reasonId = null): EntityDTO
     {
-        return $this->http->post(
+        return EntityDTO::fromArray($this->http->post(
             $this->namespace() . "/{$entityId}/move/stage/{$stageId}",
             ['reason_id' => $reasonId],
-        );
+        )->json() ?? []);
     }
 
     private function namespace(): string
