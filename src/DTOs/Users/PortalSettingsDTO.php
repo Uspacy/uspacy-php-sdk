@@ -2,6 +2,8 @@
 
 namespace Uspacy\SDK\DTOs\Users;
 
+use Uspacy\SDK\DTOs\Concerns\HasRawData;
+
 /**
  * A user's portal settings (mirrors the JS `IPortalSettings`).
  *
@@ -9,6 +11,8 @@ namespace Uspacy\SDK\DTOs\Users;
  */
 final class PortalSettingsDTO
 {
+    use HasRawData;
+
     /**
      * @param  array<int, string>  $availableCurrencies
      * @param  array<int, string>  $weekends

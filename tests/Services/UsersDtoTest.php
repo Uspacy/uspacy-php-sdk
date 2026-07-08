@@ -39,6 +39,24 @@ class UsersDtoTest extends TestCase
         $this->assertSame('kept', $user->raw['some_custom_field']);
     }
 
+    public function test_custom_fields_are_readable_via_get_and_has(): void
+    {
+        $this->mockGet([
+            'id' => 7,
+            'firstName' => 'Ada',
+            'customfield_1' => 'value one',
+            'customfield_2' => ['nested' => true],
+        ]);
+
+        $user = $this->sdk->users()->getUserById(7);
+
+        $this->assertTrue($user->has('customfield_1'));
+        $this->assertSame('value one', $user->get('customfield_1'));
+        $this->assertSame(['nested' => true], $user->get('customfield_2'));
+        $this->assertFalse($user->has('customfield_404'));
+        $this->assertSame('fallback', $user->get('customfield_404', 'fallback'));
+    }
+
     public function test_get_users_hydrates_paginated_collection(): void
     {
         $this->mockGet([

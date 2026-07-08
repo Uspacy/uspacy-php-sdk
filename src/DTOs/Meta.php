@@ -2,6 +2,8 @@
 
 namespace Uspacy\SDK\DTOs;
 
+use Uspacy\SDK\DTOs\Concerns\HasRawData;
+
 /**
  * Pagination metadata returned alongside list responses (the `meta` envelope).
  *
@@ -9,6 +11,8 @@ namespace Uspacy\SDK\DTOs;
  */
 final class Meta
 {
+    use HasRawData;
+
     public function __construct(
         public readonly ?int $total,
         public readonly ?int $page,

@@ -2,14 +2,19 @@
 
 namespace Uspacy\SDK\DTOs\Users;
 
+use Uspacy\SDK\DTOs\Concerns\HasRawData;
+
 /**
  * A Uspacy user.
  *
  * The user entity is extensible (custom fields), so the documented fields are
- * typed while the complete payload is preserved in {@see $raw}.
+ * typed while the complete payload is preserved in {@see $raw}. Read custom
+ * fields with {@see get()} / {@see has()} (e.g. `$user->get('customfield_1')`).
  */
 final class UserDTO
 {
+    use HasRawData;
+
     /**
      * @param  array<int, mixed>  $email
      * @param  array<int, mixed>  $phone
