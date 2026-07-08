@@ -3,6 +3,9 @@
 namespace Uspacy\SDK\Services;
 
 use Saloon\Http\Response;
+use Uspacy\SDK\DTOs\Collection;
+use Uspacy\SDK\DTOs\Crm\RequisiteDTO;
+use Uspacy\SDK\DTOs\Crm\RequisiteTemplateDTO;
 
 /**
  * CRM requisites service.
@@ -18,20 +21,28 @@ class CrmRequisitesService extends Service
      * Get requisite templates.
      *
      * @param  array  $params  pagination params (page, list)
+     * @return Collection<RequisiteTemplateDTO>
      */
-    public function getTemplates(array $params = []): Response
+    public function getTemplates(array $params = []): Collection
     {
-        return $this->http->get(self::NAMESPACE . '/templates', $params);
+        return Collection::fromArray(
+            $this->http->get(self::NAMESPACE . '/templates', $params)->json() ?? [],
+            [RequisiteTemplateDTO::class, 'fromArray'],
+        );
     }
 
     /**
      * Get card requisites.
      *
      * @param  array  $params  requisite list filter params
+     * @return Collection<RequisiteDTO>
      */
-    public function getCardRequisites(array $params = []): Response
+    public function getCardRequisites(array $params = []): Collection
     {
-        return $this->http->get(self::NAMESPACE, $params);
+        return Collection::fromArray(
+            $this->http->get(self::NAMESPACE, $params)->json() ?? [],
+            [RequisiteDTO::class, 'fromArray'],
+        );
     }
 
     /**
@@ -39,9 +50,9 @@ class CrmRequisitesService extends Service
      *
      * @param  array  $params  requisite list filter params
      */
-    public function createCardRequisites(array $data, array $params = []): Response
+    public function createCardRequisites(array $data, array $params = []): RequisiteDTO
     {
-        return $this->http->post(self::NAMESPACE, $data, $params);
+        return RequisiteDTO::fromArray($this->http->post(self::NAMESPACE, $data, $params)->json() ?? []);
     }
 
     /**
@@ -49,9 +60,9 @@ class CrmRequisitesService extends Service
      *
      * @param  int|string  $id
      */
-    public function updateCardRequisites($id, array $data): Response
+    public function updateCardRequisites($id, array $data): RequisiteDTO
     {
-        return $this->http->patch(self::NAMESPACE . "/{$id}", $data);
+        return RequisiteDTO::fromArray($this->http->patch(self::NAMESPACE . "/{$id}", $data)->json() ?? []);
     }
 
     /**
@@ -59,9 +70,9 @@ class CrmRequisitesService extends Service
      *
      * @param  array  $params  requisite list filter params
      */
-    public function attachCardRequisites(array $params = []): Response
+    public function attachCardRequisites(array $params = []): RequisiteDTO
     {
-        return $this->http->post(self::NAMESPACE . '/references/attach-reference', [], $params);
+        return RequisiteDTO::fromArray($this->http->post(self::NAMESPACE . '/references/attach-reference', [], $params)->json() ?? []);
     }
 
     /**
@@ -79,9 +90,9 @@ class CrmRequisitesService extends Service
      *
      * @param  int|string  $requisiteId
      */
-    public function createBankRequisites($requisiteId, array $data): Response
+    public function createBankRequisites($requisiteId, array $data): RequisiteDTO
     {
-        return $this->http->post(self::NAMESPACE . "/{$requisiteId}/bank_requisites", $data);
+        return RequisiteDTO::fromArray($this->http->post(self::NAMESPACE . "/{$requisiteId}/bank_requisites", $data)->json() ?? []);
     }
 
     /**
@@ -90,9 +101,9 @@ class CrmRequisitesService extends Service
      * @param  int|string  $requisiteId
      * @param  int|string  $bankRequisiteId
      */
-    public function updateBankRequisites($requisiteId, $bankRequisiteId, array $data): Response
+    public function updateBankRequisites($requisiteId, $bankRequisiteId, array $data): RequisiteDTO
     {
-        return $this->http->patch(self::NAMESPACE . "/{$requisiteId}/bank_requisites/{$bankRequisiteId}", $data);
+        return RequisiteDTO::fromArray($this->http->patch(self::NAMESPACE . "/{$requisiteId}/bank_requisites/{$bankRequisiteId}", $data)->json() ?? []);
     }
 
     /**
@@ -112,8 +123,8 @@ class CrmRequisitesService extends Service
      * @param  int|string  $requisiteId
      * @param  array  $params  requisite list filter params
      */
-    public function attachBankRequisites($requisiteId, array $params = []): Response
+    public function attachBankRequisites($requisiteId, array $params = []): RequisiteDTO
     {
-        return $this->http->post(self::NAMESPACE . "/{$requisiteId}/bank_requisites/references/attach-reference", [], $params);
+        return RequisiteDTO::fromArray($this->http->post(self::NAMESPACE . "/{$requisiteId}/bank_requisites/references/attach-reference", [], $params)->json() ?? []);
     }
 }

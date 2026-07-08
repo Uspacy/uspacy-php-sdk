@@ -3,6 +3,9 @@
 namespace Uspacy\SDK\Services;
 
 use Saloon\Http\Response;
+use Uspacy\SDK\DTOs\Collection;
+use Uspacy\SDK\DTOs\Crm\DocumentTemplateDTO;
+use Uspacy\SDK\DTOs\Crm\DocumentTemplateFieldDTO;
 
 /**
  * CRM document templates service.
@@ -17,28 +20,35 @@ class CrmDocumentTemplatesService extends Service
      * Get document templates.
      *
      * @param  array  $params  filter params
+     * @return Collection<DocumentTemplateDTO>
      */
-    public function getDocumentTemplates(array $params = []): Response
+    public function getDocumentTemplates(array $params = []): Collection
     {
-        return $this->http->get(self::NAMESPACE, $params);
+        return Collection::fromArray(
+            $this->http->get(self::NAMESPACE, $params)->json() ?? [],
+            [DocumentTemplateDTO::class, 'fromArray'],
+        );
     }
 
     /**
      * Get the fields available for document templates.
      *
      * @param  array  $params  filter params
+     * @return array<int, DocumentTemplateFieldDTO>
      */
-    public function getDocumentTemplatesFields(array $params = []): Response
+    public function getDocumentTemplatesFields(array $params = []): array
     {
-        return $this->http->get(self::NAMESPACE . '/fields', $params);
+        $data = $this->http->get(self::NAMESPACE . '/fields', $params)->json() ?? [];
+
+        return array_map([DocumentTemplateFieldDTO::class, 'fromArray'], $data['data'] ?? []);
     }
 
     /**
      * Create a document template.
      */
-    public function createTemplate(array $data): Response
+    public function createTemplate(array $data): DocumentTemplateDTO
     {
-        return $this->http->post(self::NAMESPACE, $data);
+        return DocumentTemplateDTO::fromArray($this->http->post(self::NAMESPACE, $data)->json() ?? []);
     }
 
     /**
@@ -46,9 +56,9 @@ class CrmDocumentTemplatesService extends Service
      *
      * @param  int|string  $id
      */
-    public function updateTemplate($id, array $data): Response
+    public function updateTemplate($id, array $data): DocumentTemplateDTO
     {
-        return $this->http->patch(self::NAMESPACE . "/{$id}", $data);
+        return DocumentTemplateDTO::fromArray($this->http->patch(self::NAMESPACE . "/{$id}", $data)->json() ?? []);
     }
 
     /**
