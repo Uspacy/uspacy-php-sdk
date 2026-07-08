@@ -64,6 +64,24 @@ Every service is reachable through an accessor on the connector:
 | `$sdk->settings()` | `SettingsService` | `settings/v1` |
 | `$sdk->auth()` | `AuthService` | `auth/v1` |
 
+### CRM-family services (JS-parity)
+
+Dedicated, entity-scoped CRM services mirroring the JS SDK:
+
+| Accessor | Service | Scope |
+| --- | --- | --- |
+| `$sdk->crmDeals()` / `crmLeads()` / `crmContacts()` / `crmCompanies()` | `CrmEntityService` | `/crm/v1/entities/{type}` |
+| `$sdk->crmDealsFunnels()` / `crmLeadsFunnels()` | `CrmFunnelsService` | funnels, stages, reasons |
+| `$sdk->crmDealsStages()` / `crmLeadsStages()` | `CrmStagesService` | stages, reasons |
+| `$sdk->crmProducts()` | `CrmProductsService` | `/crm/v1/static/products` |
+| `$sdk->crmProductsCategories()` | `CrmProductsCategoryService` | `/crm/v1/static/product-categories` |
+| `$sdk->crmProductsUnits()` | `CrmProductsUnitService` | `/crm/v1/static/measurement-units` |
+| `$sdk->crmProductsTaxes()` | `CrmProductsTaxesService` | `/crm/v1/static/taxes` |
+| `$sdk->crmProductsPriceTypes()` | `CrmProductsPriceTypesService` | `/crm/v1/static/product-price-types` |
+| `$sdk->crmProductsForEntity()` | `CrmProductsForEntityService` | `/crm/v1/static/list-products` |
+| `$sdk->crmRequisites()` | `CrmRequisitesService` | `/crm/v1/requisites` |
+| `$sdk->crmDocumentTemplates()` | `CrmDocumentTemplatesService` | `/crm/v1/documents/templates` |
+
 ## Examples
 
 ### CRM
@@ -87,6 +105,24 @@ $sdk->crm()->deleteField('deals', 'priority');
 $sdk->crm()->getFunnels('deals');
 $sdk->crm()->getFunnelStagesByFunnelId('deals', 3);
 $sdk->crm()->moveFunnelStage('deals', 42, 'stage-id', ['reason' => 'won']);
+
+// Entity-scoped CRM services (JS-parity)
+$sdk->crmDeals()->getEntities(['page' => 1]);
+$sdk->crmDeals()->createEntity(['title' => 'New deal']);
+$sdk->crmDeals()->massDeletion(entityIds: [1, 2, 3]);
+$sdk->crmDeals()->moveFromStageToStage(42, 9, reasonId: 3);
+
+$sdk->crmDealsFunnels()->getFunnels();
+$sdk->crmDealsStages()->getStages();
+
+// Products catalog
+$sdk->crmProducts()->getProducts(['page' => 1]);
+$sdk->crmProductsTaxes()->createProductTax(['name' => 'VAT', 'rate' => 20]);
+$sdk->crmProductsForEntity()->createProductsForEntity([['product_id' => 1, 'quantity' => 2]]);
+
+// Requisites & document templates
+$sdk->crmRequisites()->getCardRequisites(['entity_id' => 5]);
+$sdk->crmDocumentTemplates()->getDocumentTemplates();
 
 // Products, calls, CRM tasks
 $sdk->crm()->createProduct(['name' => 'Widget', 'price' => 9.99]);

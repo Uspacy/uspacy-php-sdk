@@ -9,7 +9,18 @@ use Saloon\Traits\Plugins\AlwaysThrowOnErrors;
 use Uspacy\SDK\Services\ActivitiesService;
 use Uspacy\SDK\Services\AuthService;
 use Uspacy\SDK\Services\CommentsService;
+use Uspacy\SDK\Services\CrmDocumentTemplatesService;
+use Uspacy\SDK\Services\CrmEntityService;
+use Uspacy\SDK\Services\CrmFunnelsService;
+use Uspacy\SDK\Services\CrmProductsCategoryService;
+use Uspacy\SDK\Services\CrmProductsForEntityService;
+use Uspacy\SDK\Services\CrmProductsPriceTypesService;
+use Uspacy\SDK\Services\CrmProductsService;
+use Uspacy\SDK\Services\CrmProductsTaxesService;
+use Uspacy\SDK\Services\CrmProductsUnitService;
+use Uspacy\SDK\Services\CrmRequisitesService;
 use Uspacy\SDK\Services\CrmService;
+use Uspacy\SDK\Services\CrmStagesService;
 use Uspacy\SDK\Services\DepartmentsService;
 use Uspacy\SDK\Services\EmailsService;
 use Uspacy\SDK\Services\FilesService;
@@ -52,6 +63,86 @@ class UspacySDK extends Connector
     public function crm(): CrmService
     {
         return new CrmService($this->http());
+    }
+
+    public function crmDeals(): CrmEntityService
+    {
+        return new CrmEntityService($this->http(), 'deals');
+    }
+
+    public function crmLeads(): CrmEntityService
+    {
+        return new CrmEntityService($this->http(), 'leads');
+    }
+
+    public function crmContacts(): CrmEntityService
+    {
+        return new CrmEntityService($this->http(), 'contacts');
+    }
+
+    public function crmCompanies(): CrmEntityService
+    {
+        return new CrmEntityService($this->http(), 'companies');
+    }
+
+    public function crmDealsFunnels(): CrmFunnelsService
+    {
+        return new CrmFunnelsService($this->http(), 'deals');
+    }
+
+    public function crmLeadsFunnels(): CrmFunnelsService
+    {
+        return new CrmFunnelsService($this->http(), 'leads');
+    }
+
+    public function crmDealsStages(): CrmStagesService
+    {
+        return new CrmStagesService($this->http(), 'deals');
+    }
+
+    public function crmLeadsStages(): CrmStagesService
+    {
+        return new CrmStagesService($this->http(), 'leads');
+    }
+
+    public function crmProducts(): CrmProductsService
+    {
+        return new CrmProductsService($this->http());
+    }
+
+    public function crmProductsCategories(): CrmProductsCategoryService
+    {
+        return new CrmProductsCategoryService($this->http());
+    }
+
+    public function crmProductsUnits(): CrmProductsUnitService
+    {
+        return new CrmProductsUnitService($this->http());
+    }
+
+    public function crmProductsTaxes(): CrmProductsTaxesService
+    {
+        return new CrmProductsTaxesService($this->http());
+    }
+
+    public function crmProductsPriceTypes(): CrmProductsPriceTypesService
+    {
+        return new CrmProductsPriceTypesService($this->http());
+    }
+
+    public function crmProductsForEntity(): CrmProductsForEntityService
+    {
+        return new CrmProductsForEntityService($this->http());
+    }
+
+    public function crmRequisites(): CrmRequisitesService
+    {
+        return new CrmRequisitesService($this->http());
+    }
+
+    public function crmDocumentTemplates(): CrmDocumentTemplatesService
+    {
+        return new CrmDocumentTemplatesService($this->http());
     }
 
     public function smartObjects(): SmartObjectsService
