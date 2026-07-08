@@ -3,6 +3,7 @@
 namespace Uspacy\SDK\Services;
 
 use Saloon\Http\Response;
+use Uspacy\SDK\DTOs\Crm\UnitDTO;
 
 /**
  * CRM product measurement units service.
@@ -15,18 +16,22 @@ class CrmProductsUnitService extends Service
 
     /**
      * Get all measurement units.
+     *
+     * @return array<int, UnitDTO>
      */
-    public function getProductUnits(): Response
+    public function getProductUnits(): array
     {
-        return $this->http->get(self::NAMESPACE);
+        $data = $this->http->get(self::NAMESPACE)->json() ?? [];
+
+        return array_map([UnitDTO::class, 'fromArray'], $data['data'] ?? []);
     }
 
     /**
      * Create a measurement unit.
      */
-    public function createProductUnit(array $data): Response
+    public function createProductUnit(array $data): UnitDTO
     {
-        return $this->http->post(self::NAMESPACE, $data);
+        return UnitDTO::fromArray($this->http->post(self::NAMESPACE, $data)->json() ?? []);
     }
 
     /**
@@ -34,9 +39,9 @@ class CrmProductsUnitService extends Service
      *
      * @param  int|string  $id
      */
-    public function updateProductUnit($id, array $data): Response
+    public function updateProductUnit($id, array $data): UnitDTO
     {
-        return $this->http->patch(self::NAMESPACE . "/{$id}", $data);
+        return UnitDTO::fromArray($this->http->patch(self::NAMESPACE . "/{$id}", $data)->json() ?? []);
     }
 
     /**

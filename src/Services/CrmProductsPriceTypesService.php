@@ -3,6 +3,7 @@
 namespace Uspacy\SDK\Services;
 
 use Saloon\Http\Response;
+use Uspacy\SDK\DTOs\Crm\PriceTypeDTO;
 
 /**
  * CRM product price types service.
@@ -15,18 +16,22 @@ class CrmProductsPriceTypesService extends Service
 
     /**
      * Get all price types.
+     *
+     * @return array<int, PriceTypeDTO>
      */
-    public function getProductPriceTypes(): Response
+    public function getProductPriceTypes(): array
     {
-        return $this->http->get(self::NAMESPACE);
+        $data = $this->http->get(self::NAMESPACE)->json() ?? [];
+
+        return array_map([PriceTypeDTO::class, 'fromArray'], $data['data'] ?? []);
     }
 
     /**
      * Create a price type.
      */
-    public function createProductPriceType(array $data): Response
+    public function createProductPriceType(array $data): PriceTypeDTO
     {
-        return $this->http->post(self::NAMESPACE, $data);
+        return PriceTypeDTO::fromArray($this->http->post(self::NAMESPACE, $data)->json() ?? []);
     }
 
     /**
@@ -34,9 +39,9 @@ class CrmProductsPriceTypesService extends Service
      *
      * @param  int|string  $id
      */
-    public function updateProductPriceType($id, array $data): Response
+    public function updateProductPriceType($id, array $data): PriceTypeDTO
     {
-        return $this->http->patch(self::NAMESPACE . "/{$id}", $data);
+        return PriceTypeDTO::fromArray($this->http->patch(self::NAMESPACE . "/{$id}", $data)->json() ?? []);
     }
 
     /**

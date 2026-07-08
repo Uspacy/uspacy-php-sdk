@@ -3,6 +3,7 @@
 namespace Uspacy\SDK\Services;
 
 use Saloon\Http\Response;
+use Uspacy\SDK\DTOs\Crm\TaxDTO;
 
 /**
  * CRM product taxes service.
@@ -15,18 +16,22 @@ class CrmProductsTaxesService extends Service
 
     /**
      * Get all taxes.
+     *
+     * @return array<int, TaxDTO>
      */
-    public function getProductTaxes(): Response
+    public function getProductTaxes(): array
     {
-        return $this->http->get(self::NAMESPACE);
+        $data = $this->http->get(self::NAMESPACE)->json() ?? [];
+
+        return array_map([TaxDTO::class, 'fromArray'], $data['data'] ?? []);
     }
 
     /**
      * Create a tax.
      */
-    public function createProductTax(array $data): Response
+    public function createProductTax(array $data): TaxDTO
     {
-        return $this->http->post(self::NAMESPACE, $data);
+        return TaxDTO::fromArray($this->http->post(self::NAMESPACE, $data)->json() ?? []);
     }
 
     /**
@@ -34,9 +39,9 @@ class CrmProductsTaxesService extends Service
      *
      * @param  int|string  $id
      */
-    public function updateProductTax($id, array $data): Response
+    public function updateProductTax($id, array $data): TaxDTO
     {
-        return $this->http->patch(self::NAMESPACE . "/{$id}", $data);
+        return TaxDTO::fromArray($this->http->patch(self::NAMESPACE . "/{$id}", $data)->json() ?? []);
     }
 
     /**

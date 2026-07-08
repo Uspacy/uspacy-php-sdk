@@ -3,6 +3,9 @@
 namespace Uspacy\SDK\Services;
 
 use Saloon\Http\Response;
+use Uspacy\SDK\DTOs\Collection;
+use Uspacy\SDK\DTOs\Crm\FieldDTO;
+use Uspacy\SDK\DTOs\Crm\ProductDTO;
 
 /**
  * CRM products service.
@@ -21,18 +24,22 @@ class CrmProductsService extends Service
      * Get a page of products.
      *
      * @param  array  $params  query parameters (page, list, filters, ...)
+     * @return Collection<ProductDTO>
      */
-    public function getProducts(array $params = []): Response
+    public function getProducts(array $params = []): Collection
     {
-        return $this->http->get(self::NAMESPACE, $params);
+        return Collection::fromArray(
+            $this->http->get(self::NAMESPACE, $params)->json() ?? [],
+            [ProductDTO::class, 'fromArray'],
+        );
     }
 
     /**
      * Create a product.
      */
-    public function createProduct(array $data): Response
+    public function createProduct(array $data): ProductDTO
     {
-        return $this->http->post(self::NAMESPACE, $data);
+        return ProductDTO::fromArray($this->http->post(self::NAMESPACE, $data)->json() ?? []);
     }
 
     /**
@@ -40,9 +47,9 @@ class CrmProductsService extends Service
      *
      * @param  int|string  $id
      */
-    public function updateProduct($id, array $data): Response
+    public function updateProduct($id, array $data): ProductDTO
     {
-        return $this->http->patch(self::NAMESPACE . "/{$id}", $data);
+        return ProductDTO::fromArray($this->http->patch(self::NAMESPACE . "/{$id}", $data)->json() ?? []);
     }
 
     /**
@@ -87,26 +94,30 @@ class CrmProductsService extends Service
 
     /**
      * Get product fields.
+     *
+     * @return array<int, FieldDTO>
      */
-    public function getFields(): Response
+    public function getFields(): array
     {
-        return $this->http->get(self::DYNAMIC_NAMESPACE . '/fields');
+        $data = $this->http->get(self::DYNAMIC_NAMESPACE . '/fields')->json() ?? [];
+
+        return array_map([FieldDTO::class, 'fromArray'], $data['data'] ?? []);
     }
 
     /**
      * Create a product field.
      */
-    public function createField(array $data): Response
+    public function createField(array $data): FieldDTO
     {
-        return $this->http->post(self::DYNAMIC_NAMESPACE . '/fields', $data);
+        return FieldDTO::fromArray($this->http->post(self::DYNAMIC_NAMESPACE . '/fields', $data)->json() ?? []);
     }
 
     /**
      * Update a product field by its code.
      */
-    public function updateField(string $code, array $data): Response
+    public function updateField(string $code, array $data): FieldDTO
     {
-        return $this->http->patch(self::DYNAMIC_NAMESPACE . "/fields/{$code}", $data);
+        return FieldDTO::fromArray($this->http->patch(self::DYNAMIC_NAMESPACE . "/fields/{$code}", $data)->json() ?? []);
     }
 
     /**

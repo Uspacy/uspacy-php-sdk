@@ -3,6 +3,7 @@
 namespace Uspacy\SDK\Services;
 
 use Saloon\Http\Response;
+use Uspacy\SDK\DTOs\Crm\CategoryDTO;
 
 /**
  * CRM product categories service.
@@ -15,18 +16,22 @@ class CrmProductsCategoryService extends Service
 
     /**
      * Get all product categories.
+     *
+     * @return array<int, CategoryDTO>
      */
-    public function getProductCategories(): Response
+    public function getProductCategories(): array
     {
-        return $this->http->get(self::NAMESPACE);
+        $data = $this->http->get(self::NAMESPACE)->json() ?? [];
+
+        return array_map([CategoryDTO::class, 'fromArray'], $data['data'] ?? []);
     }
 
     /**
      * Create a product category.
      */
-    public function createProductCategory(array $data): Response
+    public function createProductCategory(array $data): CategoryDTO
     {
-        return $this->http->post(self::NAMESPACE, $data);
+        return CategoryDTO::fromArray($this->http->post(self::NAMESPACE, $data)->json() ?? []);
     }
 
     /**
@@ -34,9 +39,9 @@ class CrmProductsCategoryService extends Service
      *
      * @param  int|string  $id
      */
-    public function updateProductCategory($id, array $data): Response
+    public function updateProductCategory($id, array $data): CategoryDTO
     {
-        return $this->http->patch(self::NAMESPACE . "/{$id}", $data);
+        return CategoryDTO::fromArray($this->http->patch(self::NAMESPACE . "/{$id}", $data)->json() ?? []);
     }
 
     /**
