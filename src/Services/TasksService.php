@@ -3,13 +3,17 @@
 namespace Uspacy\SDK\Services;
 
 use Saloon\Http\Response;
+use Uspacy\SDK\DTOs\Collection;
+use Uspacy\SDK\DTOs\Crm\FieldDTO;
+use Uspacy\SDK\DTOs\Tasks\TaskDTO;
 
 /**
  * Tasks service.
  *
  * Covers the `tasks/v1` module: tasks CRUD, kanban stages, custom fields,
  * templates, transfers, trash and checklists. Mirrors the Go SDK's `tasks.go`
- * and the JS SDK's TasksService.
+ * and the JS SDK's TasksService. Task-shaped responses return {@see TaskDTO};
+ * task fields reuse {@see FieldDTO} (the shared `IField` model).
  */
 class TasksService extends Service
 {
@@ -27,18 +31,19 @@ class TasksService extends Service
      * Get a page of tasks.
      *
      * @param  array  $params  query parameters (page, list, filters, ...)
+     * @return Collection<TaskDTO>
      */
-    public function getTasks(array $params = []): Response
+    public function getTasks(array $params = []): Collection
     {
-        return $this->http->get(self::NAMESPACE . '/tasks', $params);
+        return $this->toTaskCollection($this->http->get(self::NAMESPACE . '/tasks', $params));
     }
 
     /**
      * Create a task.
      */
-    public function createTask(array $data): Response
+    public function createTask(array $data): TaskDTO
     {
-        return $this->http->post(self::NAMESPACE . '/tasks', $data);
+        return $this->toTask($this->http->post(self::NAMESPACE . '/tasks', $data));
     }
 
     /**
@@ -46,9 +51,9 @@ class TasksService extends Service
      *
      * @param  int|string  $taskId
      */
-    public function patchTask($taskId, array $data): Response
+    public function patchTask($taskId, array $data): TaskDTO
     {
-        return $this->http->patch(self::NAMESPACE . "/tasks/{$taskId}", $data);
+        return $this->toTask($this->http->patch(self::NAMESPACE . "/tasks/{$taskId}", $data));
     }
 
     /**
@@ -56,9 +61,9 @@ class TasksService extends Service
      *
      * @param  int|string  $taskId
      */
-    public function markTaskReady($taskId): Response
+    public function markTaskReady($taskId): TaskDTO
     {
-        return $this->http->patch(self::NAMESPACE . "/tasks/{$taskId}/ready");
+        return $this->toTask($this->http->patch(self::NAMESPACE . "/tasks/{$taskId}/ready"));
     }
 
     /**
@@ -71,10 +76,12 @@ class TasksService extends Service
 
     /**
      * Get the custom fields available for tasks.
+     *
+     * @return array<int, FieldDTO>
      */
-    public function getTaskFields(): Response
+    public function getTaskFields(): array
     {
-        return $this->http->get(self::NAMESPACE . '/custom_fields/tasks/fields');
+        return $this->toFields($this->http->get(self::NAMESPACE . '/custom_fields/tasks/fields'));
     }
 
     /**
@@ -110,9 +117,9 @@ class TasksService extends Service
      *
      * @param  int|string  $templateId
      */
-    public function getRecurringTemplate($templateId): Response
+    public function getRecurringTemplate($templateId): TaskDTO
     {
-        return $this->http->get(self::NAMESPACE . "/templates/recurring/{$templateId}");
+        return $this->toTask($this->http->get(self::NAMESPACE . "/templates/recurring/{$templateId}"));
     }
 
     /**
@@ -121,9 +128,9 @@ class TasksService extends Service
      * @param  int|string  $id
      * @param  array  $params  extra query params (e.g. crm_entity_list)
      */
-    public function getTask($id, array $params = []): Response
+    public function getTask($id, array $params = []): TaskDTO
     {
-        return $this->http->get(self::TASKS . "/{$id}/", $params);
+        return $this->toTask($this->http->get(self::TASKS . "/{$id}/", $params));
     }
 
     /**
@@ -131,9 +138,9 @@ class TasksService extends Service
      *
      * @param  int|string  $id
      */
-    public function updateTask($id, array $data): Response
+    public function updateTask($id, array $data): TaskDTO
     {
-        return $this->http->patch(self::TASKS . "/{$id}/", $data);
+        return $this->toTask($this->http->patch(self::TASKS . "/{$id}/", $data));
     }
 
     /**
@@ -151,9 +158,9 @@ class TasksService extends Service
      *
      * @param  int|string  $id
      */
-    public function replicateTask($id, array $data): Response
+    public function replicateTask($id, array $data): TaskDTO
     {
-        return $this->http->post(self::TASKS . "/{$id}/replicate", $data);
+        return $this->toTask($this->http->post(self::TASKS . "/{$id}/replicate", $data));
     }
 
     /**
@@ -161,9 +168,9 @@ class TasksService extends Service
      *
      * @param  int|string  $id
      */
-    public function updateTaskStatus($id, string $action): Response
+    public function updateTaskStatus($id, string $action): TaskDTO
     {
-        return $this->http->patch(self::TASKS . "/{$id}/{$action}");
+        return $this->toTask($this->http->patch(self::TASKS . "/{$id}/{$action}"));
     }
 
     /**
@@ -172,9 +179,9 @@ class TasksService extends Service
      * @param  int|string  $id
      * @param  int|string  $userId
      */
-    public function delegateTask($id, $userId): Response
+    public function delegateTask($id, $userId): TaskDTO
     {
-        return $this->http->patch(self::TASKS . "/{$id}/delegation", ['user_id' => $userId]);
+        return $this->toTask($this->http->patch(self::TASKS . "/{$id}/delegation", ['user_id' => $userId]));
     }
 
     /**
@@ -228,58 +235,66 @@ class TasksService extends Service
 
     /**
      * Get recurring task templates.
+     *
+     * @return Collection<TaskDTO>
      */
-    public function getRecurringTemplates(array $params = []): Response
+    public function getRecurringTemplates(array $params = []): Collection
     {
-        return $this->http->get(self::TEMPLATES . '/recurring', $params);
+        return $this->toTaskCollection($this->http->get(self::TEMPLATES . '/recurring', $params));
     }
 
     /**
      * Get one-time task templates.
+     *
+     * @return Collection<TaskDTO>
      */
-    public function getOneTimeTemplates(array $params = []): Response
+    public function getOneTimeTemplates(array $params = []): Collection
     {
-        return $this->http->get(self::TEMPLATES . '/one_time', $params);
+        return $this->toTaskCollection($this->http->get(self::TEMPLATES . '/one_time', $params));
     }
 
     /**
      * Create a task template of the given type (recurring / one_time).
      */
-    public function createTemplate(string $type, array $data): Response
+    public function createTemplate(string $type, array $data): TaskDTO
     {
-        return $this->http->post(self::TEMPLATES . "/{$type}", $data);
+        return $this->toTask($this->http->post(self::TEMPLATES . "/{$type}", $data));
     }
 
     /**
      * Get the task hierarchy.
+     *
+     * @return Collection<TaskDTO>
      */
-    public function getHierarchies(array $params = []): Response
+    public function getHierarchies(array $params = []): Collection
     {
-        return $this->http->get(self::TASKS . '/hierarchy', $params);
+        return $this->toTaskCollection($this->http->get(self::TASKS . '/hierarchy', $params));
     }
 
     /**
      * Get task fields (JS-parity endpoint at `tasks/fields`).
+     *
+     * @return array<int, FieldDTO>
      */
-    public function getTasksFields(): Response
+    public function getTasksFields(): array
     {
-        return $this->http->get(self::TASKS . '/fields');
+        return $this->toFields($this->http->get(self::TASKS . '/fields'));
     }
 
     /**
      * Create a task field.
      */
-    public function createTasksField(array $data): Response
+    public function createTasksField(array $data): FieldDTO
     {
-        return $this->http->post(self::TASKS . '/fields', $data);
+        return FieldDTO::fromArray($this->http->post(self::TASKS . '/fields', $data)->json() ?? []);
     }
 
     /**
      * Update a task field by code.
      */
-    public function updateTasksField(string $fieldCode, array $data): Response
+    public function updateTasksField(string $fieldCode, array $data): FieldDTO
     {
-        return $this->http->patch(self::TASKS . "/fields/{$fieldCode}", $data);
+        return FieldDTO::fromArray($this->http->patch(self::TASKS . "/fields/{$fieldCode}", $data)->json() ?? []);
     }
 
     /**
@@ -340,10 +355,12 @@ class TasksService extends Service
 
     /**
      * Get deleted (trash) tasks.
+     *
+     * @return Collection<TaskDTO>
      */
-    public function getTrashTasks(array $params = []): Response
+    public function getTrashTasks(array $params = []): Collection
     {
-        return $this->http->get(self::TRASH, $params);
+        return $this->toTaskCollection($this->http->get(self::TRASH, $params));
     }
 
     /**
@@ -351,9 +368,9 @@ class TasksService extends Service
      *
      * @param  int|string  $id
      */
-    public function getTrashTask($id): Response
+    public function getTrashTask($id): TaskDTO
     {
-        return $this->http->get(self::TRASH, ['id' => $id]);
+        return $this->toTask($this->http->get(self::TRASH, ['id' => $id]));
     }
 
     /**
@@ -391,23 +408,23 @@ class TasksService extends Service
     }
 
     /**
-     * Create a checklist on a task.
+     * Create a checklist on a task. Returns the updated task.
      *
      * @param  int|string  $taskId
      */
-    public function createChecklist($taskId, array $data): Response
+    public function createChecklist($taskId, array $data): TaskDTO
     {
-        return $this->http->post(self::TASKS . "/{$taskId}/checklists/", $data);
+        return $this->toTask($this->http->post(self::TASKS . "/{$taskId}/checklists/", $data));
     }
 
     /**
-     * Update a checklist.
+     * Update a checklist. Returns the updated task.
      *
      * @param  int|string  $id
      */
-    public function updateChecklist($id, array $data): Response
+    public function updateChecklist($id, array $data): TaskDTO
     {
-        return $this->http->patch(self::TASKS . "/checklists/{$id}", $data);
+        return $this->toTask($this->http->patch(self::TASKS . "/checklists/{$id}", $data));
     }
 
     /**
@@ -421,24 +438,24 @@ class TasksService extends Service
     }
 
     /**
-     * Create a checklist item.
+     * Create a checklist item. Returns the updated task.
      *
      * @param  int|string  $id  checklist id
      */
-    public function createChecklistItem($id, array $data): Response
+    public function createChecklistItem($id, array $data): TaskDTO
     {
-        return $this->http->post(self::TASKS . "/checklists/{$id}/items", $data);
+        return $this->toTask($this->http->post(self::TASKS . "/checklists/{$id}/items", $data));
     }
 
     /**
-     * Update a checklist item.
+     * Update a checklist item. Returns the updated task.
      *
      * @param  int|string  $id  checklist id
      * @param  int|string  $itemId
      */
-    public function updateChecklistItem($id, $itemId, array $data): Response
+    public function updateChecklistItem($id, $itemId, array $data): TaskDTO
     {
-        return $this->http->patch(self::TASKS . "/checklists/{$id}/items/{$itemId}", $data);
+        return $this->toTask($this->http->patch(self::TASKS . "/checklists/{$id}/items/{$itemId}", $data));
     }
 
     /**
@@ -450,5 +467,28 @@ class TasksService extends Service
     public function deleteChecklistItem($id, $itemId): Response
     {
         return $this->http->delete(self::TASKS . "/checklists/{$id}/items/{$itemId}");
+    }
+
+    private function toTask(Response $response): TaskDTO
+    {
+        return TaskDTO::fromArray($response->json() ?? []);
+    }
+
+    /**
+     * @return Collection<TaskDTO>
+     */
+    private function toTaskCollection(Response $response): Collection
+    {
+        return Collection::fromArray($response->json() ?? [], [TaskDTO::class, 'fromArray']);
+    }
+
+    /**
+     * @return array<int, FieldDTO>
+     */
+    private function toFields(Response $response): array
+    {
+        $data = $response->json() ?? [];
+
+        return array_map([FieldDTO::class, 'fromArray'], $data['data'] ?? []);
     }
 }
