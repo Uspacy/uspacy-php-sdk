@@ -30,9 +30,15 @@
             "Uspacy\\SDK\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Uspacy\\SDK\\Tests\\": "tests/"
+        }
+    },
     "scripts": {
         "check-cs": "vendor/bin/ecs check",
-        "fix-cs": "composer check-cs -- --fix"
+        "fix-cs": "composer check-cs -- --fix",
+        "test": "vendor/bin/phpunit"
     },
     "extra": {
         "laravel": {
