@@ -31,9 +31,35 @@ use Uspacy\SDK\Http\Client\UspacySDK;
 // Base URL is your portal host, e.g. https://<domain>.uspacy.ua
 $sdk = new UspacySDK('https://acme.uspacy.ua', $accessToken);
 
-// Every call returns a Saloon\Http\Response — use ->json(), ->dto(), ->status()
+// Most methods return a Saloon\Http\Response — use ->json(), ->status()
 $deals = $sdk->crm()->getDeals(['page' => 1, 'list' => 20])->json();
+
+// Some services return typed DTOs (see "Typed responses" below)
+$user = $sdk->users()->getUserById(7); // UserDTO
 ```
+
+## Typed responses (DTOs)
+
+Most methods return a raw `Saloon\Http\Response`. Selected services return
+**typed DTOs** (`Uspacy\SDK\DTOs\...`) for a nicer developer experience — currently:
+
+- **Auth** — `applicationSignIn()` / `refreshToken()` return a `Tokens` DTO.
+- **Users** — see the [Users service guide](docs/users.md).
+
+Every output DTO keeps the **full raw payload**, so portal-specific **custom
+fields are never dropped**. Read them with `get()` / `has()`:
+
+```php
+$user = $sdk->users()->getUserById(7);
+$user->firstName;              // typed field
+$user->get('customfield_1');   // custom field (or null)
+$user->has('customfield_2');   // true / false
+$user->raw;                    // the complete, untouched API payload
+```
+
+### Service guides
+
+- [Users](docs/users.md) — full DTO reference and examples.
 
 ## Architecture
 

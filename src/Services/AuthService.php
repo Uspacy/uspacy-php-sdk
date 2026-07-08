@@ -2,7 +2,6 @@
 
 namespace Uspacy\SDK\Services;
 
-use Saloon\Http\Response;
 use Uspacy\SDK\Http\Client\Requests\Auth\ApplicationSignInRequest;
 use Uspacy\SDK\Http\Client\Requests\Auth\RefreshTokenRequest;
 use Uspacy\SDK\Http\Client\Requests\Auth\Tokens;
@@ -25,10 +24,12 @@ class AuthService extends Service
     }
 
     /**
-     * Refresh the current access token.
+     * Refresh the current access token and receive a fresh token pair.
      */
-    public function refreshToken(): Response
+    public function refreshToken(): Tokens
     {
-        return $this->http->connector()->send(new RefreshTokenRequest());
+        return $this->http->connector()
+            ->send(new RefreshTokenRequest())
+            ->dto();
     }
 }

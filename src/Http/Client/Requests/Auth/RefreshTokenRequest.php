@@ -5,6 +5,7 @@ namespace Uspacy\SDK\Http\Client\Requests\Auth;
 use Saloon\Contracts\Body\HasBody;
 use Saloon\Enums\Method;
 use Saloon\Http\Request;
+use Saloon\Http\Response;
 use Saloon\Traits\Body\HasJsonBody;
 
 class RefreshTokenRequest extends Request implements HasBody
@@ -27,5 +28,16 @@ class RefreshTokenRequest extends Request implements HasBody
     protected function defaultBody(): array
     {
         return [];
+    }
+
+    public function createDtoFromResponse(Response $response): Tokens
+    {
+        $data = $response->json() ?? [];
+
+        return new Tokens(
+            $data['jwt'] ?? '',
+            $data['refreshToken'] ?? '',
+            $data['expireInSeconds'] ?? '',
+        );
     }
 }
