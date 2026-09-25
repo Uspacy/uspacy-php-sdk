@@ -33,6 +33,13 @@ $page->meta->total;
 $sdk->crm()->getDeals(['page' => 1]);      // Collection<EntityDTO>
 $sdk->crm()->getEntities('deals', []);     // Collection<EntityDTO>
 
+// Single entity by id -> EntityDTO (GET /crm/v1/entities/{type}/{id})
+$deal = $sdk->crmDeals()->getEntity(1);
+$deal->id;                  // 1
+$deal->get('title');
+
+$sdk->crm()->getEntity('deals', 1);        // EntityDTO — works for custom entity types too
+
 // Single writes -> EntityDTO
 $deal = $sdk->crmDeals()->createEntity(['title' => 'New deal', 'customfield_1' => 'x']);
 $deal->id;
@@ -93,7 +100,7 @@ $sdk->crmDeals()->deleteListValue('priority', 'value-id');
 | Method | Returns |
 | --- | --- |
 | `getEntities`, `getByStage`, `getContacts/Companies/Leads/Deals` | `Collection<EntityDTO>` |
-| `createEntity`, `updateEntity`, `patchEntity`, `moveFromStageToStage`, `create{Contact,Company,Lead,Deal}` | `EntityDTO` |
+| `getEntity`, `createEntity`, `updateEntity`, `patchEntity`, `moveFromStageToStage`, `create{Contact,Company,Lead,Deal}` | `EntityDTO` |
 | `getFields` | `FieldDTO[]` |
 | `getField`, `createField`, `updateField` | `FieldDTO` |
 | `deleteEntity`, `massDeletion`, `massEditing`, `massEditEntities`, `deleteField`, `updateListValues`, `deleteListValue` | `Saloon\Http\Response` |

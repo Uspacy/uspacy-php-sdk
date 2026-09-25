@@ -40,6 +40,14 @@ class CrmEntityService extends Service
     }
 
     /**
+     * Get a single entity by id.
+     */
+    public function getEntity(int $id): EntityDTO
+    {
+        return EntityDTO::fromArray($this->http->get($this->namespace() . "/{$id}")->json() ?? []);
+    }
+
+    /**
      * Create an entity.
      */
     public function createEntity(array $data): EntityDTO

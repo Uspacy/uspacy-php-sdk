@@ -33,6 +33,15 @@ class CrmEntityServiceTest extends TestCase
         $this->assertRequestSent('DELETE', '/crm/v1/entities/deals/7');
     }
 
+    public function test_get_entity_targets_a_single_record(): void
+    {
+        $this->sdk->crmDeals()->getEntity(7);
+        $this->assertRequestSent('GET', '/crm/v1/entities/deals/7');
+
+        $this->sdk->crmContacts()->getEntity(15);
+        $this->assertRequestSent('GET', '/crm/v1/entities/contacts/15');
+    }
+
     public function test_mass_deletion_sends_wrapped_body_and_query(): void
     {
         $this->sdk->crmDeals()->massDeletion([1, 2], [3], false, ['q' => 'x']);
