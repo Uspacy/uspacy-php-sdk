@@ -44,6 +44,17 @@ class CrmService extends Service
     }
 
     /**
+     * Get a single entity of the given type by id.
+     *
+     * @param  string  $entityType  e.g. contacts, companies, leads, deals or a custom type
+     * @param  int  $id
+     */
+    public function getEntity(string $entityType, int $id): EntityDTO
+    {
+        return EntityDTO::fromArray($this->http->get(self::NAMESPACE . "/entities/{$entityType}/{$id}")->json() ?? []);
+    }
+
+    /**
      * @return Collection<EntityDTO>
      */
     public function getContacts(array $params = []): Collection

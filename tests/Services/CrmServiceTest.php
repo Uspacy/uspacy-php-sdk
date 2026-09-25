@@ -39,6 +39,15 @@ class CrmServiceTest extends TestCase
         $this->assertRequestSent('PATCH', '/crm/v1/entities/deals/42', ['amount' => 1500]);
     }
 
+    public function test_get_entity_targets_a_single_record(): void
+    {
+        $this->sdk->crm()->getEntity('deals', 42);
+        $this->assertRequestSent('GET', '/crm/v1/entities/deals/42');
+
+        $this->sdk->crm()->getEntity('custom_objects', 24);
+        $this->assertRequestSent('GET', '/crm/v1/entities/custom_objects/24');
+    }
+
     public function test_mass_edit_targets_the_mass_edit_endpoint(): void
     {
         $this->sdk->crm()->massEditEntities('deals', ['all' => true]);
