@@ -32,13 +32,31 @@ class ActivitiesService extends Service
     }
 
     /**
+     * Get free/busy time slots.
+     */
+    public function getTimeSlots(array $params = []): Response
+    {
+        return $this->http->get(self::NAMESPACE . '/activities/time_slots', $params);
+    }
+
+    /**
+     * Create a copy of an activity.
+     *
+     * @param  int|string  $id
+     */
+    public function replicateActivity($id, array $data = []): Response
+    {
+        return $this->http->post(self::NAMESPACE . "/activities/{$id}/replicate", $data);
+    }
+
+    /**
      * Get a single activity by id.
      *
      * @param  int|string  $id
      */
     public function getActivity($id, array $params = []): Response
     {
-        return $this->http->get(self::NAMESPACE . "/entities/{$id}", $params);
+        return $this->http->get(self::NAMESPACE . "/activities/{$id}", $params);
     }
 
     /**
@@ -48,7 +66,7 @@ class ActivitiesService extends Service
      */
     public function patchActivity($id, array $data): Response
     {
-        return $this->http->patch(self::NAMESPACE . "/entities/{$id}", $data);
+        return $this->http->patch(self::NAMESPACE . "/activities/{$id}", $data);
     }
 
     /**
@@ -58,7 +76,7 @@ class ActivitiesService extends Service
      */
     public function deleteActivity($id): Response
     {
-        return $this->http->delete(self::NAMESPACE . "/entities/{$id}");
+        return $this->http->delete(self::NAMESPACE . "/activities/{$id}");
     }
 
     /**
@@ -66,6 +84,22 @@ class ActivitiesService extends Service
      */
     public function massDeleteActivities(array $data): Response
     {
-        return $this->http->delete(self::NAMESPACE . '/entities/mass_deletion', $data);
+        return $this->http->delete(self::NAMESPACE . '/activities/mass_deletion', $data);
+    }
+
+    /**
+     * Mass edit activities.
+     */
+    public function massEditActivities(array $data): Response
+    {
+        return $this->http->patch(self::NAMESPACE . '/activities/mass_edit', $data);
+    }
+
+    /**
+     * Mass reopen activities (status becomes `planned`).
+     */
+    public function massReopenActivities(array $data): Response
+    {
+        return $this->http->patch(self::NAMESPACE . '/activities/mass_reopen', $data);
     }
 }
